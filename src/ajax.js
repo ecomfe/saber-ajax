@@ -45,6 +45,11 @@ define(function (require) {
             == Object.prototype.toString.call(value);
     }
 
+    function isString(value) {
+        return '[object String]'
+            == Object.prototype.toString.call(value);
+    }
+
     /**
      * 扩展对象
      *
@@ -201,11 +206,15 @@ define(function (require) {
         }
 
         var data = options.data;
-        if (!window.FormData || !(data instanceof FormData)) {
-            data = options.stringify === false 
-                ? data : stringifyParams(data);
+        if (window.FormData && data instanceof FormData) {
+            xhr.send(data);
         }
-        xhr.send(data);
+        else if (!isString(data) && options.stringify !== false) {
+            xhr.send(stringifyParams(data));
+        }
+        else {
+            xhr.send(data);
+        }
 
         // 包装promise对象
         return resolver.promise({
