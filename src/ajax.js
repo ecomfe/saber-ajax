@@ -45,6 +45,13 @@ define(function (require) {
             == Object.prototype.toString.call(value);
     }
 
+    /**
+     * 字符串判断
+     *
+     * @inner
+     * @param {Object} value
+     * @return {boolean}
+     */
     function isString(value) {
         return '[object String]'
             == Object.prototype.toString.call(value);
@@ -65,6 +72,12 @@ define(function (require) {
         return target;
     }
 
+    /**
+     * 清除事件
+     *
+     * @inner
+     * @param {Object} xhr
+     */
     function clearXHREvents(xhr) {
         each(eventHandler, function (key) {
             xhr['on' + key] = null;
@@ -73,6 +86,7 @@ define(function (require) {
 
     // 事件处理函数
     var eventHandler = {
+        // 请求完成事件
         load: function (xhr, resolver) {
             return function () {
                 clearXHREvents(xhr);
@@ -93,6 +107,7 @@ define(function (require) {
             };
         },
 
+        // 请求错误事件
         error: function (xhr, resolver) {
             return function () {
                 clearXHREvents(xhr);
@@ -100,6 +115,7 @@ define(function (require) {
             };
         },
 
+        // 请求中止事件
         abort: function (xhr, resolver) {
             return function () {
                 clearXHREvents(xhr);
@@ -107,6 +123,7 @@ define(function (require) {
             };
         },
 
+        // 请求超时事件
         timeout: function (xhr, resolver) {
             return function () {
                 clearXHREvents(xhr);
