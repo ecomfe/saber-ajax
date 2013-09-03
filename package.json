@@ -1,0 +1,14 @@
+{
+  "name": "saber-ajax",
+  "version": "0.1.0",
+  "description": "适用于移动端的Ajax封装",
+  "main": "ajax",
+  "contributors": [
+    {
+      "name": "treelite",
+      "email": "c.xinle@gmail.com"
+    }
+  ],
+  "repository": "git://github.com/ecomfe/saber-ajax.git",
+  "license": "BSD"
+}
