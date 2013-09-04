@@ -204,6 +204,7 @@ actionList['/info'] = function (request, response) {
     var querys = require('querystring').parse(queryString);
     var info = {
         method: request.method,
+        headers: request.headers,
         url: request.url,
         params: querys
     };
