@@ -7,6 +7,7 @@ define(function (require) {
     var ajax = require('saber-ajax');
 
     var URL = {
+        SLEEP: '/sleep',
         ECHO: '/echo',
         INFO: '/info'
     };
@@ -71,7 +72,7 @@ define(function (require) {
         });
     }
 
-    function assertRequest(url, options, callback) {
+    function assertRequest(url, options, expectRes) {
         var res;
         var ret;
         var request = ajax.request(url, options);
@@ -96,7 +97,12 @@ define(function (require) {
         );
 
         runs(function () {
-            expect(callback(res)).toBeTruthy();
+            if (typeof expectRes == 'function') {
+                expect(expectRes(res)).toBeTruthy();
+            }
+            else {
+                expect(res).toEqual(expectRes);
+            }
         });
     }
 
@@ -150,5 +156,226 @@ define(function (require) {
                 return res.method == 'GET';
             });
         });
+
+        it('同步请求', function () {
+            var req = ajax.request(
+                URL.ECHO + '?content=hello',
+                {
+                    async: false
+                }
+            );
+
+            req.then(function (data) {
+                expect(data).toEqual('hello');
+            });
+        });
+
+        it('abort异步请求', function () {
+            var ret;
+            var data;
+            var req = ajax.request(URL.SLEEP + '?time=1000');
+
+            req.then(
+                function (res) {
+                    data = res;
+                    ret = true;
+                },
+                function (error) {
+                    data = error;
+                    ret = true;
+                }
+            );
+
+            setTimeout(function () {
+                req.abort();
+            }, 500);
+
+            waitsFor(
+                function () {
+                    return ret;
+                }, 
+                '应该正确处理返回数据', 
+                TIMEOUT
+            );
+
+            runs(function () {
+                expect(data).toEqual('abort');
+            });
+        });
+
+        describe('POST参数序列化', function () {
+            it('字符串参数不进行序列化', function () {
+                var data = 'content=hello';
+                assertRequest(
+                    URL.ECHO, 
+                    {
+                        method: 'POST',
+                        data: data
+                    },
+                    'hello'    
+                );
+            });
+
+            if (window.FormData) {
+                it('FormData参数不进行序列化', function () {
+                    var data = new FormData();
+                    data.append('content', 'hello');
+                    assertRequest(
+                        URL.ECHO, 
+                        {
+                            method: 'POST',
+                            data: data
+                        },
+                        'hello'    
+                    );
+                });
+            }
+            else {
+                it('当前浏览器不支持FormData，忽略FormData序列化测试', function () {
+                    expect(true).toBeTruthy();
+                });
+            }
+        });
+
+        describe('请求头设置', function () {
+            it('设置成功', function () {
+                assertRequest(
+                    URL.INFO,
+                    {
+                        headers: {
+                            'x-custom-name': 'treelite'
+                        }
+                    },
+                    function (res) {
+                        res = JSON.parse(res);
+                        return res.headers['x-custom-name'] == 'treelite';
+                    }
+                );
+            });
+            it('设置不重复', function () {
+                assertRequest(
+                    URL.INFO,
+                    {
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    },
+                    function (res) {
+                        res = JSON.parse(res);
+                        return res.headers['x-requested-with'] == 'XMLHttpRequest';
+                    }
+                );
+            });
+        });
+
+        describe('超时设置', function () {
+            // 先检查浏览器是否支持timeout
+            var testXHR = new XMLHttpRequest();
+            if (testXHR.timeout !== undefined) {
+                it('设置成功', function () {
+                    assertRequest(
+                        URL.SLEEP + '?time=1000',
+                        {
+                            timeout: 500
+                        },
+                        'timeout'
+                    );
+                });
+
+                it('忽略给同步请求设置的超时', function () {
+                    var req = ajax.request(
+                        URL.SLEEP + '?time=1000',
+                        {
+                            async: false,
+                            timeout: 500
+                        }
+                    );
+
+                    req.then(
+                        function (res) {
+                            expect(true).toBeTruthy();
+                        }, 
+                        function (error) {
+                            expect(error).not.toEqual('timeout');
+                        }
+                    );
+                });
+            }
+            else {
+                it('当前浏览器不支持timeout设置', function () {
+                    expect(true).toBeTruthy();
+                });
+            }
+        });
+
+        describe('responseType设置', function () {
+            if (window.ArrayBuffer) {
+                it('arraybuffer', function () {
+                    var data = 'hello';
+                    assertRequest(
+                        URL.ECHO,
+                        {
+                            method: 'POST',
+                            data: 'content=' + encodeURIComponent(JSON.stringify(data)),
+                            responseType: 'arraybuffer'
+                        },
+                        function (res) {
+                            return res instanceof ArrayBuffer;
+                        }
+                    );
+                });
+            }
+            else {
+                it('该浏览器不支持ArrayBuffer, 忽略该测试', function () {
+                    expect(true).toBeTruthy();
+                });
+            }
+
+            if (window.Blob) {
+                it('blob', function () {
+                    var data = 'hello';
+                    assertRequest(
+                        URL.ECHO,
+                        {
+                            method: 'POST',
+                            data: 'content=' + encodeURIComponent(JSON.stringify(data)),
+                            responseType: 'blob'
+                        },
+                        function (res) {
+                            return res instanceof Blob;
+                        }
+                    );
+                });
+            }
+            else {
+                it('该浏览器不支持Blob, 忽略该测试', function () {
+                    expect(true).toBeTruthy();
+                });
+            }
+
+            if (window.Document) {
+                it('document', function () {
+                    var data = 'hello';
+                    assertRequest(
+                        URL.ECHO,
+                        {
+                            method: 'POST',
+                            data: 'content=' + encodeURIComponent(JSON.stringify(data)),
+                            responseType: 'document'
+                        },
+                        function (res) {
+                            return res instanceof Document;
+                        }
+                    );
+                });
+            }
+            else {
+                it('该浏览器不支持Document, 忽略该测试', function () {
+                    expect(true).toBeTruthy();
+                });
+            }
+        });
+
+        //TODO Progress事件测试
     });
 });
