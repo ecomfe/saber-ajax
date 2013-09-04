@@ -198,7 +198,9 @@ define(function (require) {
         xhr.responseType = options.responseType || DEF_RESPONSE_TYPE;
 
         // 设置超时
-        if (options.async === false && options.timeout) {
+        // 暂时不进行兼容性考虑
+        // Chrome for Mac 就不支持 >_<
+        if (options.async !== false && options.timeout) {
             xhr.timeout = options.timeout;
         }
 
