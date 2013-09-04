@@ -1,6 +1,6 @@
 # saber-ajax
 
-适用于移动端、promise风格的ajax封装，支持[XMLHttpRequest2](http://www.w3.org/TR/XMLHttpRequest2/)
+适用于移动端、promise风格的ajax封装，支持[XMLHttpRequest2](http://www.w3.org/TR/XMLHttpRequest2/)，依赖[saber-promise](https://github.com/ecomfe/saber-promise)
 
 <del>以<a href="http://baike.baidu.com/view/8420590.htm" target="_blank">吾王</a>之名~</del>
 
@@ -8,7 +8,7 @@
 
     var request = ajax.get(url);
     request.then(
-        // 请求请求完成
+        // 请求完成
         // data为responseText
         function (data) {
             renderData(data);
@@ -71,3 +71,16 @@
 #### Request.abort
 
 中止请求，会触发`onReject`回调，并且第一个参数为`'abort'`
+
+
+## Test
+
+启动测试服务器
+
+    $ node test/ws.js
+
+默认端口为`8848`，可以通过参数修改：
+
+    $ node test/ws.js 8080
+
+访问`http://localhost:8848/test/runner.html`
