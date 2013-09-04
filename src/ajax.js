@@ -107,9 +107,13 @@ define(function (require) {
                 if ((status >= 200 && status < 300)
                     || status == 304
                 ) {
-                    var res = xhr.responseType == DEF_RESPONSE_TYPE
-                        ? xhr.responseText
-                        : xhr.response;
+                    var res;
+                    if (xhr.responseType && xhr.responseType !== DEF_RESPONSE_TYPE) {
+                        res = xhr.response;
+                    }
+                    else {
+                        res = xhr.responseText;
+                    }
 
                     resolver.fulfill(res);
                 }

@@ -14,18 +14,19 @@ define(function (require) {
 
     var TIMEOUT = 3000;
 
-    function assertGet(url, expectRes) {
-        var res;
+    function assertGet(url, expectSuccessRes, expectFailRes) {
+        var successRes;
+        var failRes;
         var ret;
         var request = ajax.get(url);
 
         request.then(
             function (data) {
-                res = data;
+                successRes = data;
                 ret = true;
             },
             function (status) {
-                res = status;
+                failRes = status;
                 ret = true;
             }
         );
@@ -39,22 +40,28 @@ define(function (require) {
         );
 
         runs(function () {
-            expect(res).toEqual(expectRes);
+            if (arguments.length >= 3) {
+                expect(failRes).toEqual(expectFailRes);
+            }
+            else {
+                expect(successRes).toEqual(expectSuccessRes);
+            }
         });
     }
 
-    function assertPost(url, data, expectRes) {
-        var res;
+    function assertPost(url, data, expectSuccessRes, expectFailRes) {
+        var successRes;
+        var failRes;
         var ret;
         var request = ajax.post(url, data);
 
         request.then(
             function (data) {
-                res = data;
+                successRes = data;
                 ret = true;
             },
             function (status) {
-                res = status;
+                failRes = status;
                 ret = true;
             }
         );
@@ -68,22 +75,28 @@ define(function (require) {
         );
 
         runs(function () {
-            expect(res).toEqual(expectRes);
+            if (arguments.length >= 3) {
+                expect(failRes).toEqual(expectFailRes);
+            }
+            else {
+                expect(successRes).toEqual(successRes);
+            }
         });
     }
 
-    function assertRequest(url, options, expectRes) {
-        var res;
+    function assertRequest(url, options, expectSuccessRes, expectFailRes) {
+        var successRes;
+        var failRes;
         var ret;
         var request = ajax.request(url, options);
 
         request.then(
             function (data) {
-                res = data;
+                successRes = data;
                 ret = true;
             },
             function (status) {
-                res = status;
+                failRes = status;
                 ret = true;
             }
         );
@@ -97,11 +110,14 @@ define(function (require) {
         );
 
         runs(function () {
-            if (typeof expectRes == 'function') {
-                expect(expectRes(res)).toBeTruthy();
+            if (arguments.length >= 3) {
+                expect(failRes).toEqual(expectFailRes);
+            }
+            else if (typeof expectSuccessRes == 'function') {
+                expect(expectSuccessRes(successRes, failRes)).toBeTruthy();
             }
             else {
-                expect(res).toEqual(expectRes);
+                expect(successRes).toEqual(expectSuccessRes);
             }
         });
     }
@@ -109,10 +125,10 @@ define(function (require) {
     describe('get', function () {
         describe('各状态码正确响应', function () {
             it('500', function () {
-                assertGet(URL.ECHO + '?status=500', 500);
+                assertGet(URL.ECHO + '?status=500', null, 500);
             });
             it('404', function () {
-                assertGet(URL.ECHO + '?status=404', 404);
+                assertGet(URL.ECHO + '?status=404', null, 404);
             });
             it('304', function () {
                 assertGet(URL.ECHO + '?status=304', '');
@@ -127,11 +143,11 @@ define(function (require) {
         describe('各状态码正确响应', function () {
             it('500', function () {
                 var data = 'status=500';
-                assertPost(URL.ECHO, data, 500);
+                assertPost(URL.ECHO, data, null, 500);
             });
             it('404', function () {
                 var data = 'status=404';
-                assertPost(URL.ECHO, data, 404);
+                assertPost(URL.ECHO, data, null, 404);
             });
             it('304', function () {
                 var data = 'status=304';
