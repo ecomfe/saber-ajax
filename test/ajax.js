@@ -331,49 +331,22 @@ define(function (require) {
                 });
             }
 
-            if (window.Blob) {
-                it('blob', function () {
-                    var data = 'hello';
-                    assertRequest(
-                        URL.ECHO,
-                        {
-                            method: 'POST',
-                            data: 'content=' + encodeURIComponent(JSON.stringify(data)),
-                            responseType: 'blob'
-                        },
-                        function (res) {
-                            return res instanceof Blob;
-                        }
-                    );
-                });
-            }
-            else {
-                it('该浏览器不支持Blob, 忽略该测试', function () {
-                    expect(true).toBeTruthy();
-                });
-            }
+            it('设置不支持类型以text处理', function () {
+                var data = 'hello';
+                assertRequest(
+                    URL.ECHO,
+                    {
+                        method: 'POST',
+                        data: 'content=' + encodeURIComponent(JSON.stringify(data)),
+                        responseType: 'html'
+                    },
+                    function (res) {
+                        return Object.prototype.toString.call(res)
+                            == '[object String]';
+                    }
+                );
+            });
 
-            if (window.Document) {
-                it('document', function () {
-                    var data = 'hello';
-                    assertRequest(
-                        URL.ECHO,
-                        {
-                            method: 'POST',
-                            data: 'content=' + encodeURIComponent(JSON.stringify(data)),
-                            responseType: 'document'
-                        },
-                        function (res) {
-                            return res instanceof Document;
-                        }
-                    );
-                });
-            }
-            else {
-                it('该浏览器不支持Document, 忽略该测试', function () {
-                    expect(true).toBeTruthy();
-                });
-            }
         });
 
         //TODO Progress事件测试

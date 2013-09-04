@@ -45,14 +45,14 @@
 发起请求，`options`配置项参数为可选
 
 * `options.method` `string` 请求方式，默认为`'GET'`
-* `options.data` `string|Object` 请求参数
+* `options.data` `string|Object` 请求参数，支持[FormData](http://www.w3.org/TR/XMLHttpRequest2/#interface-formdata)
 * `options.stringify` `boolean` 是否自动序列化请求参数，默认为`true`
 * `options.async` `boolean` 是否异步请求，默认为`true`
 * `options.headers` `Object` 需要额外设置的请求头
 * `options.timeout` `number` 请求超时时间，单位ms，只有异步请求才有效
 * `options.username` `string` 用户名
 * `options.password` `string` 密码
-* `options.responseType` `string` 返回的数据类型：`arraybuffer`、`blob`或者`document`
+* `options.responseType` `string` 返回的[数据类型](http://www.w3.org/TR/XMLHttpRequest2/#xmlhttprequestresponsetype)，默认为空。`text`与`arraybuffer`各浏览器的支持力度较好，其它选项使用前请多多思量~
 
 ### Request
 

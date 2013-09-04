@@ -5,8 +5,20 @@
 
 define(function (require) {
 
+    // responseType枚举类型
+    // 默认为text
+    // arraybuffer 的支持还不错
+    // 其它选项在移动终端上的支持力度较低
+    var RESPONSE_TYPE_ENUM = {
+        TEXT: 'text',
+        ARRAYBUFFER: 'arraybuffer',
+        DOCUMENT: 'document',
+        BLOB: 'blob',
+        JSON: 'json'
+    };
+    
     // 默认responseType
-    var DEF_RESPONSE_TYPE = 'text';
+    var DEF_RESPONSE_TYPE = RESPONSE_TYPE_ENUM.TEXT;
 
     /**
      * 创建请求对象
@@ -195,7 +207,10 @@ define(function (require) {
         });
 
         // 设置返回数据类型
-        xhr.responseType = options.responseType || DEF_RESPONSE_TYPE;
+        if (options.responseType) {
+            xhr.responseType = RESPONSE_TYPE_ENUM[options.responseType.toUpperCase()]
+                || DEF_RESPONSE_TYPE;
+        }
 
         // 设置超时
         // 暂时不进行兼容性考虑
