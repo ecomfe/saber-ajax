@@ -9,6 +9,9 @@
       "email": "c.xinle@gmail.com"
     }
   ],
+  "dependencies": {
+    "saber-promise": "~0.1.0"
+  },
   "repository": "git://github.com/ecomfe/saber-ajax.git",
   "license": "BSD"
 }
