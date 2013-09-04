@@ -34,6 +34,13 @@ function createResponse(response, data) {
     response.end(data.content);
 }
 
+/**
+ * 判断是否是静态文件
+ *
+ * @inner
+ * @param {string} pathname
+ * @return {boolean}
+ */
 function isStatic(pathname) {
     if (pathname.charAt(0) == '/') {
         pathname = pathname.substring(1);
@@ -45,6 +52,13 @@ function isStatic(pathname) {
     return fs.existsSync(file);
 }
 
+/**
+ * 获取静态文件
+ *
+ * @inner
+ * @param {string} pathname
+ * @return {Object}
+ */
 function getStatic(pathname) {
     if (pathname.charAt(0) == '/') {
         pathname = pathname.substring(1);
@@ -57,6 +71,94 @@ function getStatic(pathname) {
         content: fs.readFileSync(file),
         mimetype: MIME_TYPES[path.extname(file).substring(1)] || 'text/html'
     };
+}
+
+function trim(str) {
+    return str.replace(/^(\s|\t|\n|\r)+|(\s|\t|\n|\r)+$/, '');
+}
+
+/**
+ * 解析Form-Data数据
+ * 简单方式处理
+ *
+ * @inner
+ * @param {string} str 请求参数
+ */
+function parseFormData(str) {
+    var res = {};
+    var regexp = new RegExp('Content-Disposition:\\s+form-data;\\s+name="([^"]+)"', 'g');
+
+    var finded;
+    var i;
+    var dataToken;
+    var endToken;
+    var token;
+    var name;
+    while(finded = regexp.exec(str)) {
+        name = RegExp.$1;
+        dataToken = [];
+        endToken = [];
+        i = regexp.lastIndex;
+        while (i < str.length 
+            && (str.charAt(i) == '\r' || str.charAt(i) == '\n')
+        ) {
+            i++;
+        }
+        while (i < str.length) {
+            token = str.charAt(i);
+            dataToken.push(token);
+            if (token == '-') {
+                endToken.push(token);
+            }
+            else {
+                endToken = [];
+            }
+            if (endToken.length >= 6) {
+                dataToken.splice(
+                    dataToken.length - endToken.length, 
+                    endToken.length
+                );
+                dataToken = trim(dataToken.join(''));
+                if (res[name]) {
+                    res[name] = [res[name]];
+                    res[name].push(dataToken);
+                }
+                else {
+                    res[name] = dataToken;
+                }
+                break;
+            }
+            i++;
+        }
+    }
+    return res;
+}
+
+/**
+ * 获取POST数据
+ * 按文本解析，不支持file
+ *
+ * @inner
+ * @param {Object} request
+ * @param {Function(Object)} callback
+ */
+function getPostData(request, callback) {
+    var data = [];
+
+    request.on('data', function (chunk) {
+        data.push(chunk);
+    });
+
+    request.on('end', function () {
+        data = data.join('');
+        if (data.indexOf('Content-Disposition: form-data;') >= 0) {
+            data = parseFormData(data);
+        }
+        else {
+            data = require('querystring').parse(data);
+        }
+        callback(data);
+    });
 }
 
 var actionList = {};
@@ -81,13 +183,8 @@ actionList['/sleep'] = function (request, response) {
 actionList['/echo'] = function (request, response) {
     var queryString = require('url').parse(request.url, true).query || {};
     if (request.method == 'POST') {
-        var data = [];
-        request.on('data', function (chunk) {
-            data.push(chunk);
-        });
-        request.on('end', function () {
-            data = data.join('');
-            data = extend(queryString, require('querystring').parse(data));
+        getPostData(request, function (data) {
+            data = extend(queryString, data);
             createResponse(response, {
                 content: data.content || '',
                 status: data.status || 200
@@ -110,15 +207,10 @@ actionList['/info'] = function (request, response) {
         url: request.url,
         params: querys
     };
+
     if (request.method == 'POST') {
-        var data = [];
-        request.on('data', function (chunk) {
-            data.push(chunk);
-        });
-        request.on('end', function () {
-            data = data.join('');
-            data = extend(querys, require('querystring').parse(data));
-            info.params = data;
+        getPostData(request, function (data) {
+            info.params = extend(querys, data);
             createResponse(response, {
                 content: JSON.stringify(info),
                 status: data.status || 200
