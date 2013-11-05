@@ -294,6 +294,7 @@ define(function (require) {
                         {
                             timeout: 500
                         },
+                        null,
                         'timeout'
                     );
                 });
