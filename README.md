@@ -6,23 +6,25 @@
 
 ## Usage
 
-    var request = ajax.get(url);
-    request.then(
-        // 请求完成
-        // data为responseText
-        function (data) {
-            renderData(data);
-        },
+```javascript
+var request = ajax.get(url);
+request.then(
+    // 请求完成
+    // data为responseText
+    function (data) {
+        renderData(data);
+    },
 
-        // 请求失败
-        // error参数可能为以下三种情况
-        // * 请求超时: 'timeout'
-        // * 请求中止: 'abort'
-        // * 其它情况: HTTP Status Code
-        function (error) {
-            showError(error);
-        }
-    );
+    // 请求失败
+    // error参数可能为以下三种情况
+    // * 请求超时: 'timeout'
+    // * 请求中止: 'abort'
+    // * 其它情况: HTTP Status Code
+    function (error) {
+        showError(error);
+    }
+);
+```
 
 ## API
 
