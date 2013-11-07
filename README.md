@@ -1,10 +1,14 @@
 # saber-ajax
 
-适用于移动端、promise风格的ajax封装，支持[XMLHttpRequest2](http://www.w3.org/TR/XMLHttpRequest2/)，依赖[saber-promise](https://github.com/ecomfe/saber-promise)
+适用于移动端、promise风格的ajax封装，支持[XMLHttpRequest2](http://www.w3.org/TR/XMLHttpRequest2/)
 
 <del>以<a href="http://baike.baidu.com/view/8420590.htm" target="_blank">吾王</a>之名~</del>
 
 ## Usage
+
+通过`edp`引入模块
+
+    $ edp import saber-ajax
 
 ```javascript
 var request = ajax.get(url);
