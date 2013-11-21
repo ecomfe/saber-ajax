@@ -255,12 +255,13 @@ define(function (require) {
         }
 
         // 包装promise对象
-        return resolver.promise({
-            // 添加abort方法
-            abort: function () {
-                xhr.abort();
-            }
-        });
+        // 添加abort方法
+        var promise = resolver.promise();
+        promise.abort = function () {
+            xhr.abort();
+        };
+
+        return promise;
     }
 
     return {

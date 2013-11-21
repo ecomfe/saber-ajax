@@ -20,10 +20,16 @@ define(function (require) {
                 else {
                     resolver.reject(res);
                 }
+            },
+            function (reason) {
+                resolver.reject({status: reason});
             }
         );
 
-        return resolver.promise(req);
+        var res = resolver.promise();
+        res.abort = req.abort;
+
+        return res;
     }
 
     return {

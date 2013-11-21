@@ -1,3 +1,0 @@
-[submodule "test/dep/saber-promise"]
-	path = test/dep/saber-promise
-	url = https://github.com/ecomfe/saber-promise.git
