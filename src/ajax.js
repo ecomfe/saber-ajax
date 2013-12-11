@@ -5,6 +5,13 @@
 
 define(function (require) {
 
+    var bind = require('saber-lang/bind');
+    var Emitter = require('saber-emitter');
+
+    var exports = {};
+
+    Emitter.mixin(exports);
+
     // responseType枚举类型
     // 默认为text
     // arraybuffer 的支持还不错
@@ -38,11 +45,9 @@ define(function (require) {
      * @param {Function(string,string)} callback
      */
     function each(object, callback) {
-        for (var key in object) {
-            if (object.hasOwnProperty(key)) {
-                callback(key, object[key]);
-            }
-        }
+        Object.keys(object).forEach(function (key) {
+            callback(key, object[key]);
+        });
     }
 
     /**
@@ -96,6 +101,26 @@ define(function (require) {
         });
     }
 
+    /**
+     * 根据reponseType获取返回内容
+     *
+     * @inner
+     * @return {*}
+     */
+    function getResponseData(xhr) {
+        var res;
+        if (xhr.responseType 
+            && xhr.responseType !== DEF_RESPONSE_TYPE
+        ) {
+            res = xhr.response;
+        }
+        else {
+            res = xhr.responseText;
+        }
+
+        return res;
+    }
+
     // 事件处理函数
     var eventHandler = {
         // 请求完成事件
@@ -104,18 +129,11 @@ define(function (require) {
                 clearXHREvents(xhr);
 
                 var status = xhr.status;
+
                 if ((status >= 200 && status < 300)
                     || status == 304
                 ) {
-                    var res;
-                    if (xhr.responseType && xhr.responseType !== DEF_RESPONSE_TYPE) {
-                        res = xhr.response;
-                    }
-                    else {
-                        res = xhr.responseText;
-                    }
-
-                    resolver.fulfill(res);
+                    resolver.fulfill(getResponseData(xhr));
                 }
                 else {
                     resolver.reject(status);
@@ -146,6 +164,100 @@ define(function (require) {
                 resolver.reject('timeout');
             };
         }
+    };
+
+    /**
+     * 数据请求包装类
+     * 结合`XMLHttpRequest`与`Promise`
+     *
+     * @constructor
+     * @param {XMLHttpRequest} xhr
+     * @param {Resolver} resolver
+     * @param {Object} options 请求配置参数
+     */
+    function Requester(xhr, resolver, options) {
+        this.xhr = xhr;
+        this.promise = resolver.promise();
+        this.url = options.url;
+
+        this.handleSuccess = false;
+        this.handleFail = false;
+
+        // 触发全局事件
+        this.then(
+            bind(exports.emit, exports, 'success', this),
+            bind(exports.emit, exports, 'fail', this)
+        );
+    }
+
+    /**
+     * 添加请求成功，失败处理
+     *
+     * @public
+     * @param {Function} onFulfill 请求成功处理
+     * @param {Function} onReject 请求失败处理
+     * @return {Promise}
+     */
+    Requester.prototype.then = function (onFulfill, onReject) {
+        this.handleSuccess = this.handleSuccess || !!onFulfill;
+        this.handleFail = this.handleFail || !!onReject;
+        return this.promise.then(onFulfill, onReject);
+    };
+
+    /**
+     * 请求成功处理
+     *
+     * @public
+     * @param {Function} success
+     * @return {Promise}
+     */
+    Requester.prototype.success = function (success) {
+        this.handleSuccess = true;
+        return this.then(success);
+    };
+
+    /**
+     * 请求失败处理
+     *
+     * @public
+     * @param {Function} fail
+     * @return {Promise}
+     */
+    Requester.prototype.fail = function (fail) {
+        this.handleFail = true;
+        return this.then(null, fail);
+    };
+
+    /**
+     * 请求完成处理
+     * 无论请求是否成功都会被调用
+     *
+     * @public
+     * @param {Function} callback
+     * @return {Promise}
+     */
+    Requester.prototype.ensure = function (callback) {
+        this.handleSuccess = this.handleFail = true;
+        return this.then(callback, callback);
+    };
+
+    /**
+     * 中止请求
+     *
+     * @public
+     */
+    Requester.prototype.abort = function () {
+        this.xhr.abort();
+    };
+
+    /**
+     * 获取请求返回的内容
+     *
+     * @public
+     * @return {*}
+     */
+    Requester.prototype.getData = function () {
+        return getResponseData(this.xhr);
     };
 
     /**
@@ -183,6 +295,7 @@ define(function (require) {
      * @param {string=} options.username 用户名
      * @param {string=} options.password 密码
      * @param {string=} options.responseType 返回的数据类型
+     * @param {Function=} options.before 请求发起前处理
      * @param {Object|Function=} options.progress 过程处理函数
      * @return {Object} promise对象
      */
@@ -211,9 +324,10 @@ define(function (require) {
         });
 
         // 设置返回数据类型
-        if (options.responseType) {
-            xhr.responseType = RESPONSE_TYPE_ENUM[options.responseType.toUpperCase()]
-                || DEF_RESPONSE_TYPE;
+        var responseType;
+        if (responseType = options.responseType) {
+            xhr.responseType = RESPONSE_TYPE_ENUM[responseType.toUpperCase()]
+                                || DEF_RESPONSE_TYPE;
         }
 
         // 设置超时
@@ -243,6 +357,13 @@ define(function (require) {
             }
         }
 
+        if (options.before && isFunction(options.before)) {
+            var ret = options.before(xhr, resolver);
+            if (ret === false) {
+                return new Requester(xhr, resolver, options);
+            }
+        }
+
         var data = options.data;
         if (window.FormData && data instanceof FormData) {
             xhr.send(data);
@@ -254,67 +375,60 @@ define(function (require) {
             xhr.send(data);
         }
 
-        // 包装promise对象
-        // 添加abort方法
-        var promise = resolver.promise();
-        promise.abort = function () {
-            xhr.abort();
-        };
-
-        return promise;
+        return new Requester(xhr, resolver, options);
     }
 
-    return {
-        /**
-         * 发起get异步请求
-         *
-         * @public
-         * @param {string} url
-         * @return {Object} promise对象
-         */
-        get: function (url) {
-            var options = {
-                method: 'GET'
-            };
+    /**
+     * 发起get异步请求
+     *
+     * @public
+     * @param {string} url
+     * @return {Requester}
+     */
+    exports.get = function (url) {
+        var options = {
+            method: 'GET'
+        };
 
-            return request(url, options);
-        },
-
-        /**
-         * 发起post异步请求
-         *
-         * @public
-         * @param {string} url
-         * @param {string|Object} url
-         * @return {Object} promise对象
-         */
-        post: function (url, data) {
-            var options = {
-                method: 'POST',
-                data: data
-            };
-
-            return request(url, options);
-        },
-
-        /**
-         * 发起请求
-         *
-         * @public
-         * @param {string} url
-         * @param {Object} options 请求配置项
-         * @param {string=} options.method 请求方式，默认为GET
-         * @param {string|Object=} options.data 请求参数
-         * @param {boolean=} options.stringify 是否自动序列化请求参数，默认为true
-         * @param {boolean=} options.async 是否异步请求，默认为true
-         * @param {Object=} options.headers 需要额外设置的请求头
-         * @param {number=} options.timeout 请求超时时间，单位ms，只有异步请求才有效
-         * @param {string=} options.username 用户名
-         * @param {string=} options.password 密码
-         * @param {string=} options.responseType 返回的数据类型
-         * @param {Object|Function=} options.progress 过程处理函数
-         * @return {Object} promise对象
-         */
-        request: request
+        return request(url, options);
     };
+
+    /**
+     * 发起post异步请求
+     *
+     * @public
+     * @param {string} url
+     * @param {string|Object} url
+     * @return {Requester}
+     */
+    exports.post = function (url, data) {
+        var options = {
+            method: 'POST',
+            data: data
+        };
+
+        return request(url, options);
+    };
+
+    /**
+     * 发起请求
+     *
+     * @public
+     * @param {string} url
+     * @param {Object} options 请求配置项
+     * @param {string=} options.method 请求方式，默认为GET
+     * @param {string|Object=} options.data 请求参数
+     * @param {boolean=} options.stringify 是否自动序列化请求参数，默认为true
+     * @param {boolean=} options.async 是否异步请求，默认为true
+     * @param {Object=} options.headers 需要额外设置的请求头
+     * @param {number=} options.timeout 请求超时时间，单位ms，只有异步请求才有效
+     * @param {string=} options.username 用户名
+     * @param {string=} options.password 密码
+     * @param {string=} options.responseType 返回的数据类型
+     * @param {Object|Function=} options.progress 过程处理函数
+     * @return {Requester}
+     */
+    exports.request = request;
+
+    return exports;
 });

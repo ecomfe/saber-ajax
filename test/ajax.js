@@ -368,4 +368,95 @@ define(function (require) {
 
         //TODO Progress事件测试
     });
+
+    describe('Requester', function () {
+        it('.success()', function (done) {
+            var req = ajax.get(URL.ECHO + '?content=hello');
+
+            req.success(function (data) {
+                expect(data).toBe('hello');
+                done();
+            });
+        });
+
+        it('.fail()', function (done) {
+            var req = ajax.get(URL.ECHO + '?status=500');
+
+            req.fail(function (status) {
+                expect(status).toBe(500);
+                done();
+            });
+        });
+
+        it('.ensure()', function (done) {
+            var fn = jasmine.createSpy('ensureFn');
+            var req1 = ajax.get(URL.ECHO + '?status=200');
+            var req2 = ajax.get(URL.ECHO + '?status=500');
+
+            req1.ensure(fn);
+            req2.ensure(fn);
+
+            setTimeout(function () {
+                expect(fn.callCount).toBe(2);
+                done();
+            }, 300);
+        });
+    });
+
+    describe('全局事件', function () {
+        it('success', function (done) {
+            var url = URL.ECHO + '?content=hello';
+            var req = ajax.get(url);
+
+            ajax.once('success', function (req) {
+                expect(req.url).toBe(url);
+                expect(req.getData()).toBe('hello');
+                done();
+            });
+        });
+
+        it('fail', function (done) {
+            var url = URL.ECHO + '?status=500';
+            var req = ajax.get(url);
+
+            ajax.once('fail', function (req) {
+                expect(req.url).toBe(url);
+                done();
+            });
+        });
+
+        it('handleSuccess', function () {
+            var url = URL.ECHO + '?content=hello';
+            var req = ajax.get(url);
+
+            ajax.once('success', function (req) {
+                expect(req.url).toBe(url);
+                expect(req.handleSuccess).toBeFalse();
+            });
+
+            req = ajax.get(url).success(function () {});
+
+            ajax.once('success', function (req) {
+                expect(req.url).toBe(url);
+                expect(req.handleSuccess).toBeThury();
+            });
+        });
+
+        it('handleFail', function () {
+            var url = URL.ECHO + '?status=500';
+            var req = ajax.get(url);
+
+            ajax.once('fail', function (req) {
+                expect(req.url).toBe(url);
+                expect(req.handleFail).toBeFalse();
+            });
+
+            req = ajax.get(url).fail(function () {});
+
+            ajax.once('fail', function (req) {
+                expect(req.url).toBe(url);
+                expect(req.handleFail).toBeThury();
+            });
+        });
+    });
 });
