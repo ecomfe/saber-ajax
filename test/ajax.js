@@ -14,160 +14,107 @@ define(function (require) {
 
     var TIMEOUT = 3000;
 
-    function assertGet(url, expectSuccessRes, expectFailRes) {
-        var successRes;
-        var failRes;
-        var ret;
+    function assertGet(done, url, expectSuccessRes, expectFailRes) {
         var request = ajax.get(url);
 
         request.then(
             function (data) {
-                successRes = data;
-                ret = true;
+                expect(data).toEqual(expectSuccessRes);
+                done();
             },
             function (status) {
-                failRes = status;
-                ret = true;
+                expect(status).toEqual(expectFailRes);
+                done();
             }
         );
-
-        waitsFor(
-            function () {
-                return ret;
-            },
-            '应该正确处理返回数据',
-            TIMEOUT
-        );
-
-        runs(function () {
-            if (arguments.length >= 3) {
-                expect(failRes).toEqual(expectFailRes);
-            }
-            else {
-                expect(successRes).toEqual(expectSuccessRes);
-            }
-        });
     }
 
-    function assertPost(url, data, expectSuccessRes, expectFailRes) {
-        var successRes;
-        var failRes;
-        var ret;
+    function assertPost(done, url, data, expectSuccessRes, expectFailRes) {
         var request = ajax.post(url, data);
 
         request.then(
             function (data) {
-                successRes = data;
-                ret = true;
+                expect(data).toEqual(expectSuccessRes);
+                done();
             },
             function (status) {
-                failRes = status;
-                ret = true;
+                expect(status).toEqual(expectFailRes);
+                done();
             }
         );
-
-        waitsFor(
-            function () {
-                return ret;
-            },
-            '应该正确处理返回数据',
-            TIMEOUT
-        );
-
-        runs(function () {
-            if (arguments.length >= 3) {
-                expect(failRes).toEqual(expectFailRes);
-            }
-            else {
-                expect(successRes).toEqual(successRes);
-            }
-        });
     }
 
-    function assertRequest(url, options, expectSuccessRes, expectFailRes) {
-        var successRes;
-        var failRes;
-        var ret;
+    function assertRequest(done, url, options, expectSuccessRes, expectFailRes) {
         var request = ajax.request(url, options);
 
         request.then(
             function (data) {
-                successRes = data;
-                ret = true;
+                if (typeof expectSuccessRes == 'function') {
+                    expect(expectSuccessRes(data)).toBeTruthy();
+                }
+                else {
+                    expect(data).toEqual(expectSuccessRes);
+                }
+                done();
             },
             function (status) {
-                failRes = status;
-                ret = true;
+                if (typeof expectSuccessRes == 'function') {
+                    expect(expectSuccessRes(status)).toBeTruthy();
+                }
+                else {
+                    expect(status).toEqual(expectFailRes);
+                }
+                done();
             }
         );
-
-        waitsFor(
-            function () {
-                return ret;
-            },
-            '应该正确处理返回数据',
-            TIMEOUT
-        );
-
-        runs(function () {
-            if (arguments.length >= 3) {
-                expect(failRes).toEqual(expectFailRes);
-            }
-            else if (typeof expectSuccessRes == 'function') {
-                expect(expectSuccessRes(successRes, failRes)).toBeTruthy();
-            }
-            else {
-                expect(successRes).toEqual(expectSuccessRes);
-            }
-        });
     }
 
     describe('get', function () {
         describe('各状态码正确响应', function () {
-            it('500', function () {
-                assertGet(URL.ECHO + '?status=500', null, 500);
+            it('500', function (done) {
+                assertGet(done, URL.ECHO + '?status=500', null, 500);
             });
-            it('404', function () {
-                assertGet(URL.ECHO + '?status=404', null, 404);
+            it('404', function (done) {
+                assertGet(done, URL.ECHO + '?status=404', null, 404);
             });
-            it('304', function () {
-                assertGet(URL.ECHO + '?status=304', '');
+            it('304', function (done) {
+                assertGet(done, URL.ECHO + '?status=304', '');
             });
-            it('200', function () {
-                assertGet(URL.ECHO + '?content=hello', 'hello');
+            it('200', function (done) {
+                assertGet(done, URL.ECHO + '?content=hello', 'hello');
             });
         });
     });
 
     describe('post', function () {
         describe('各状态码正确响应', function () {
-            it('500', function () {
+            it('500', function (done) {
                 var data = 'status=500';
-                assertPost(URL.ECHO, data, null, 500);
+                assertPost(done, URL.ECHO, data, null, 500);
             });
-            it('404', function () {
+            it('404', function (done) {
                 var data = 'status=404';
-                assertPost(URL.ECHO, data, null, 404);
+                assertPost(done, URL.ECHO, data, null, 404);
             });
-            it('304', function () {
+            it('304', function (done) {
                 var data = 'status=304';
-                assertPost(URL.ECHO, data, '');
+                assertPost(done, URL.ECHO, data, '');
             });
-            it('200', function () {
+            it('200', function (done) {
                 var data = 'content=hello';
-                assertPost(URL.ECHO, data, 'hello');
+                assertPost(done, URL.ECHO, data, 'hello');
             });
         });
 
-        it('自动序列化参数并进行encodeURIComponent处理', function () {
+        it('自动序列化参数并进行encodeURIComponent处理', function (done) {
             var data = {content: '中文'};
-            assertPost(URL.ECHO, data, '中文');
+            assertPost(done, URL.ECHO, data, '中文');
         });
     });
 
     describe('request', function () {
-        it('默认GET请求', function () {
-            assertRequest(URL.INFO, {}, function (res) {
+        it('默认GET请求', function (done) {
+            assertRequest(done, URL.INFO, {}, function (res) {
                 res = JSON.parse(res);
                 return res.method == 'GET';
             });
@@ -186,19 +133,17 @@ define(function (require) {
             });
         });
 
-        it('abort异步请求', function () {
-            var ret;
-            var data;
+        it('abort异步请求', function (done) {
             var req = ajax.request(URL.SLEEP + '?time=1000');
 
             req.then(
                 function (res) {
-                    data = res;
-                    ret = true;
+                    expect(res).toEqual('abort');
+                    done();
                 },
                 function (error) {
-                    data = error;
-                    ret = true;
+                    expect(error).toEqual('abort');
+                    done();
                 }
             );
 
@@ -206,23 +151,13 @@ define(function (require) {
                 req.abort();
             }, 500);
 
-            waitsFor(
-                function () {
-                    return ret;
-                }, 
-                '应该正确处理返回数据', 
-                TIMEOUT
-            );
-
-            runs(function () {
-                expect(data).toEqual('abort');
-            });
         });
 
         describe('POST参数序列化', function () {
-            it('字符串参数不进行序列化', function () {
+            it('字符串参数不进行序列化', function (done) {
                 var data = 'content=hello';
                 assertRequest(
+                    done,
                     URL.ECHO, 
                     {
                         method: 'POST',
@@ -233,10 +168,11 @@ define(function (require) {
             });
 
             if (window.FormData) {
-                it('FormData参数不进行序列化', function () {
+                it('FormData参数不进行序列化', function (done) {
                     var data = new FormData();
                     data.append('content', 'hello');
                     assertRequest(
+                        done,
                         URL.ECHO, 
                         {
                             method: 'POST',
@@ -254,8 +190,9 @@ define(function (require) {
         });
 
         describe('请求头设置', function () {
-            it('设置成功', function () {
+            it('设置成功', function (done) {
                 assertRequest(
+                    done,
                     URL.INFO,
                     {
                         headers: {
@@ -268,8 +205,9 @@ define(function (require) {
                     }
                 );
             });
-            it('设置不重复', function () {
+            it('设置不重复', function (done) {
                 assertRequest(
+                    done,
                     URL.INFO,
                     {
                         headers: {
@@ -288,8 +226,9 @@ define(function (require) {
             // 先检查浏览器是否支持timeout
             var testXHR = new XMLHttpRequest();
             if (testXHR.timeout !== undefined) {
-                it('设置成功', function () {
+                it('设置成功', function (done) {
                     assertRequest(
+                        done,
                         URL.SLEEP + '?time=1000',
                         {
                             timeout: 500
@@ -327,9 +266,10 @@ define(function (require) {
 
         describe('responseType设置', function () {
             if (window.ArrayBuffer) {
-                it('arraybuffer', function () {
+                it('arraybuffer', function (done) {
                     var data = 'hello';
                     assertRequest(
+                        done,
                         URL.ECHO,
                         {
                             method: 'POST',
@@ -348,9 +288,10 @@ define(function (require) {
                 });
             }
 
-            it('设置不支持类型以text处理', function () {
+            it('设置不支持类型以text处理', function (done) {
                 var data = 'hello';
                 assertRequest(
+                    done,
                     URL.ECHO,
                     {
                         method: 'POST',
@@ -397,7 +338,7 @@ define(function (require) {
             req2.ensure(fn);
 
             setTimeout(function () {
-                expect(fn.callCount).toBe(2);
+                expect(fn.calls.count()).toBe(2);
                 done();
             }, 300);
         });
@@ -409,6 +350,7 @@ define(function (require) {
             var req = ajax.get(url);
 
             ajax.once('success', function (req) {
+                console.dir(req);
                 expect(req.url).toBe(url);
                 expect(req.getData()).toBe('hello');
                 done();
