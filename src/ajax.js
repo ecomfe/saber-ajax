@@ -301,7 +301,7 @@ define(function (require) {
      */
     function request(url, options) {
         var xhr = createRequest();
-        options = options || {};
+        options = extend({}, options || {});
 
         xhr.open(
             options.method || 'GET', 
@@ -375,6 +375,7 @@ define(function (require) {
             xhr.send(data);
         }
 
+        options.url = url;
         return new Requester(xhr, resolver, options);
     }
 
