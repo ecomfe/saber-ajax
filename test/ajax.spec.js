@@ -69,14 +69,20 @@ define(function (require) {
         );
     }
 
+    function isPhantomJS() {
+        return navigator.userAgent.indexOf("PhantomJS") > 0;
+    }
+
     describe('get', function () {
         describe('各状态码正确响应', function () {
-            it('500', function (done) {
-                assertGet(done, URL.ECHO + '?status=500', null, 500);
-            });
-            it('404', function (done) {
-                assertGet(done, URL.ECHO + '?status=404', null, 404);
-            });
+            if (!isPhantomJS()) {
+                it('500', function (done) {
+                    assertGet(done, URL.ECHO + '?status=500', null, 500);
+                });
+                it('404', function (done) {
+                    assertGet(done, URL.ECHO + '?status=404', null, 404);
+                });
+            }
             it('304', function (done) {
                 assertGet(done, URL.ECHO + '?status=304', '');
             });
@@ -88,14 +94,16 @@ define(function (require) {
 
     describe('post', function () {
         describe('各状态码正确响应', function () {
-            it('500', function (done) {
-                var data = 'status=500';
-                assertPost(done, URL.ECHO, data, null, 500);
-            });
-            it('404', function (done) {
-                var data = 'status=404';
-                assertPost(done, URL.ECHO, data, null, 404);
-            });
+            if (!isPhantomJS()) {
+                it('500', function (done) {
+                    var data = 'status=500';
+                    assertPost(done, URL.ECHO, data, null, 500);
+                });
+                it('404', function (done) {
+                    var data = 'status=404';
+                    assertPost(done, URL.ECHO, data, null, 404);
+                });
+            }
             it('304', function (done) {
                 var data = 'status=304';
                 assertPost(done, URL.ECHO, data, '');
@@ -320,14 +328,16 @@ define(function (require) {
             });
         });
 
-        it('.fail()', function (done) {
-            var req = ajax.get(URL.ECHO + '?status=500');
+        if (!isPhantomJS()) {
+            it('.fail()', function (done) {
+                var req = ajax.get(URL.ECHO + '?status=500');
 
-            req.fail(function (status) {
-                expect(status).toBe(500);
-                done();
+                req.fail(function (status) {
+                    expect(status).toBe(500);
+                    done();
+                });
             });
-        });
+        }
 
         it('.ensure()', function (done) {
             var fn = jasmine.createSpy('ensureFn');
@@ -350,7 +360,6 @@ define(function (require) {
             var req = ajax.get(url);
 
             ajax.once('success', function (req) {
-                console.dir(req);
                 expect(req.url).toBe(url);
                 expect(req.getData()).toBe('hello');
                 done();

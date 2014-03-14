@@ -5,14 +5,17 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
         <title>Jasmine Spec Runner</title>
         <link rel="stylesheet" type="text/css" href="http://saberlabs.github.io/static/jasmine/2.0.0/jasmine.css">
-        <script type="text/javascript" src="http://saberlabs.github.io/static/jasmine/2.0.0/jasmine.js"></script>
-        <script type="text/javascript" src="http://saberlabs.github.io/static/jasmine/2.0.0/jasmine-html.js"></script>
-        <script type="text/javascript" src="http://saberlabs.github.io/static/jasmine/2.0.0/boot.js"></script>
+        <script src="http://saberlabs.github.io/static/jasmine/2.0.0/jasmine.js"></script>
+        <script src="http://saberlabs.github.io/static/jasmine/2.0.0/jasmine-html.js"></script>
+        <script src="http://saberlabs.github.io/static/jasmine/2.0.0/console.js"></script>
+        <script src="http://saberlabs.github.io/static/jasmine/2.0.0/boot.js"></script>
+        <script src="http://saberlabs.github.io/static/jasmine/2.0.0/console-reporter.js"></script>
         <script src="http://s1.bdstatic.com/r/www/cache/ecom/esl/1-6-6/esl.js"></script>
     </head>
     <body>
         <script>
         require.config({
+            baseUrl: './',
             packages: [
                 {
                     name: 'saber-ajax',
@@ -21,12 +24,12 @@
                 },
                 {
                     name: 'saber-promise',
-                    location: 'dep/saber-promise/0.1.1/src',
+                    location: 'dep/saber-promise/0.1.2/src',
                     main: 'promise'
                 },
                 {
                     name: 'saber-emitter',
-                    location: 'dep/saber-emitter/0.3.0/src',
+                    location: 'dep/saber-emitter/0.3.1/src',
                     main: 'emitter'
                 },
                 {
@@ -36,7 +39,7 @@
             ]
         });
         
-        require(['ajax']);
+        require(['ajax.spec']);
 
         </script>
     </body>
