@@ -1,4 +1,4 @@
-# saber-ajax
+# saber-ajax [![Build Status](https://travis-ci.org/ecomfe/saber-ajax.png)](https://travis-ci.org/ecomfe/saber-ajax)
 
 适用于移动端、promise风格的ajax封装，支持[XMLHttpRequest2](http://www.w3.org/TR/XMLHttpRequest2/)
 
@@ -103,11 +103,11 @@ request.then(
 
 启动测试服务器
 
-    $ node test/ws.js
+    $ node test/server.js
 
 默认端口为`8848`，可以通过参数修改：
 
-    $ node test/ws.js 8080
+    $ node test/server.js 8080
 
 访问`http://localhost:8848/test/runner.html`
 
