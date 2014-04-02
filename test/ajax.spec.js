@@ -90,6 +90,18 @@ define(function (require) {
                 assertGet(done, URL.ECHO + '?content=hello', 'hello');
             });
         });
+
+        it('不默认设置Content-Type', function (done) {
+            assertRequest(
+                done,
+                URL.INFO,
+                {},
+                function (res) {
+                    res = JSON.parse(res);
+                    return !res.headers['content-type'];
+                }
+            );
+        });
     });
 
     describe('post', function () {
@@ -118,6 +130,55 @@ define(function (require) {
             var data = {content: '中文'};
             assertPost(done, URL.ECHO, data, '中文');
         });
+
+        it('Content-Type默认添加application/x-www-form-urlencoded', function (done) {
+            assertRequest(
+                done,
+                URL.INFO,
+                {
+                    method: 'POST'
+                },
+                function (res) {
+                    res = JSON.parse(res);
+                    return res.headers['content-type'] == 'application/x-www-form-urlencoded';
+                }
+            );
+        });
+
+        it('不覆盖已有的Content-Type设置', function (done) {
+            assertRequest(
+                done,
+                URL.INFO,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'utf-8'
+                    }
+                },
+                function (res) {
+                    res = JSON.parse(res);
+                    return res.headers['content-type'] == 'utf-8';
+                }
+            );
+        });
+
+        it('Content-type的查找忽略大小写', function (done) {
+            assertRequest(
+                done,
+                URL.INFO,
+                {
+                    method: 'POST',
+                    headers: {
+                        'content-Type': 'utf-8'
+                    }
+                },
+                function (res) {
+                    res = JSON.parse(res);
+                    return res.headers['content-type'] == 'utf-8';
+                }
+            );
+        });
+
     });
 
     describe('request', function () {

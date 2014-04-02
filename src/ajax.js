@@ -12,6 +12,9 @@ define(function (require) {
 
     Emitter.mixin(exports);
 
+    var METHOD_GET = 'GET';
+    var METHOD_POST = 'POST';
+
     // responseType枚举类型
     // 默认为text
     // arraybuffer 的支持还不错
@@ -26,6 +29,22 @@ define(function (require) {
     
     // 默认responseType
     var DEF_RESPONSE_TYPE = RESPONSE_TYPE_ENUM.TEXT;
+
+    /**
+     * 查找header定义的字段
+     * 忽略大小写（RFC2616 #3.10）
+     *
+     * @param {Object} headers
+     * @param {string} tag
+     * @return {Boolean}
+     */
+    function findHeader(headers, tag) {
+        var tags = Object.keys(headers).map(function (tag) {
+                return tag.toLowerCase();
+            });
+
+        return tags.indexOf(tag.toLowerCase()) >= 0;
+    }
 
     /**
      * 创建请求对象
@@ -304,7 +323,7 @@ define(function (require) {
         options = extend({}, options || {});
 
         xhr.open(
-            options.method || 'GET', 
+            options.method || METHOD_GET, 
             url,
             options.async || true,
             options.username,
@@ -318,6 +337,10 @@ define(function (require) {
                     'X-Requested-With': 'XMLHttpRequest'
                 }
             );
+
+        if (options.method == METHOD_POST && !findHeader(headers, 'Content-Type')) {
+            headers['Content-Type'] = 'application/x-www-form-urlencoded';
+        }
 
         each(headers, function (key, value) {
             xhr.setRequestHeader(key, value);
@@ -388,7 +411,7 @@ define(function (require) {
      */
     exports.get = function (url) {
         var options = {
-            method: 'GET'
+            method: METHOD_GET
         };
 
         return request(url, options);
@@ -404,7 +427,7 @@ define(function (require) {
      */
     exports.post = function (url, data) {
         var options = {
-            method: 'POST',
+            method: METHOD_POST,
             data: data
         };
 
