@@ -3,7 +3,7 @@ node_js:
   - 0.10
 before_install:
   - npm install phantomjs --save-dev
-  - git clone https://github.com/ecomfe/saber-emitter.git test/dep/saber-emitter/0.3.1
-  - git clone https://github.com/ecomfe/saber-lang.git test/dep/saber-lang/0.3.0
+  - git clone https://github.com/ecomfe/saber-emitter.git test/dep/saber-emitter/0.5.0
+  - git clone https://github.com/ecomfe/saber-lang.git test/dep/saber-lang/0.3.1
   - git clone https://github.com/ecomfe/saber-promise.git test/dep/saber-promise/0.1.2
 install: true

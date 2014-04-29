@@ -11,8 +11,8 @@
   ],
   "dependencies": {
     "saber-promise": "~0.1.2",
-    "saber-emitter": "~0.3.1",
-    "saber-lang": "~0.3.0"
+    "saber-emitter": "~0.5.0",
+    "saber-lang": "~0.3.1"
   },
   "scripts": {
     "pretest": "node test/ws.js start",
