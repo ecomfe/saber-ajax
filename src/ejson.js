@@ -6,13 +6,15 @@
 define(function (require) {
     var ajax = require('./ajax');
     var Resolver = require('saber-promise');
+    var bind = require('saber-lang/bind');
     var extend = require('saber-lang/extend');
+    var Emitter = require('saber-emitter');
 
     var ERROR = {
-        DATA: 1,
-        ABORT: 2,
-        TIMEOUT: 3,
-        ERROR: 4
+        DATA: -1, // json解析错误
+        ABORT: -2, // 请求 abort
+        TIMEOUT: -3,  // 请求超时
+        ERROR: -500 // 未知错误
     };
 
     function request(url, options) {
@@ -43,13 +45,17 @@ define(function (require) {
         );
 
         req.promise = resolver.promise();
+        req.promise.then(
+            bind(exports.emit, exports, 'success', req),
+            bind(exports.emit, exports, 'fail', req)
+        );
         req.handleSuccess = false;
         req.handleFail = false;
 
         return req;
     }
 
-    return {
+    var exports =  {
         get: function (url) {
             var options = {
                 method: 'GET'
@@ -71,4 +77,8 @@ define(function (require) {
 
         ERROR: extend({}, ERROR)
     };
+
+    Emitter.mixin(exports);
+
+    return exports;
 });
