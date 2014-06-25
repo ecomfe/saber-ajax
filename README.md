@@ -68,12 +68,12 @@ request.then(
 
 注册全局事件
 
-* `event` `{string}` 事件名称，支持一下事件
+* `event` `{string}` 事件名称，支持以下事件
     * `'success'` 请求成功事件，任意请求成功时触发
     * `'fail'` 请求失败事件，任意请求失败时触发
 * `fn` `{Function(Requester,*)}` 事件处理函数，触发时带有两个参数
     * `{Requester}` 请求对应的[Requester](#requester)对象
-    * `{*}` 请求成功时是请求的返回结果，请求失败时是错误信息（参考[request.then](#requestthen)关于错误信息的描述）
+    * `{*}` 请求成功时是请求的返回结果，请求失败时是错误信息（参考[request.then](#then-onfulfill-onreject-)关于错误信息的描述）
 
 可以通过注册全局事件配合[requester.handleFail](#handlefail)来提供默认的请求失败处理，比如：
 
@@ -82,7 +82,7 @@ var ajax = require('saber-ajax');
 
 // 注册全局失败事件
 ajax.on('fail', function (req, error) {
-    // 如果当前的错误请求没有被处理过
+    // 如果当前的失败请求没有被处理过
     // 则显示默认的错误提示
     if (!req.handleFail) {
         alert('亲~请求失败啦');
