@@ -293,10 +293,36 @@ define(function (require) {
 
         params = params || {};
         each(params, function (key, value) {
-            res.push(key + '=' + encodeURIComponent(value));
+            if (!Array.isArray(value)) {
+                value = [value];
+            }
+            value.forEach(function (data) {
+                res.push(key + '=' + encodeURIComponent(data));
+            });
         });
 
         return res.join('&');
+    }
+
+    /**
+     * url字符串添加query
+     *
+     * @inner
+     * @param {Object|string} query
+     * @return {string}
+     */
+    function appendQuery(url, query) {
+        if (!isString(query)) {
+            query = stringifyParams(query);
+        }
+
+        url = url.split('#');
+        var hash = url[1];
+        url = url[0];
+        url += url.indexOf('?') >= 0 ? '&' : '?';
+        url += query + (hash ? '#' + hash : '');
+
+        return url;
     }
 
     /**
@@ -321,6 +347,11 @@ define(function (require) {
     function request(url, options) {
         var xhr = createRequest();
         options = extend({}, options || {});
+
+        if (options.method == METHOD_GET && options.data) {
+            url = appendQuery(url, options.data);
+            options.data = null;
+        }
 
         xhr.open(
             options.method || METHOD_GET, 
@@ -407,11 +438,13 @@ define(function (require) {
      *
      * @public
      * @param {string} url
+     * @param {Object=} query
      * @return {Requester}
      */
-    exports.get = function (url) {
+    exports.get = function (url, query) {
         var options = {
-            method: METHOD_GET
+            method: METHOD_GET,
+            data: query
         };
 
         return request(url, options);
