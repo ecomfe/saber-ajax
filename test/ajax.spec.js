@@ -102,6 +102,15 @@ define(function (require) {
                 }
             );
         });
+
+        it('支持可选的query参数', function (done) {
+            var query = {content: '中文'};
+            ajax.get(URL.ECHO, query)
+                .then(function (data) {
+                    expect(data).toEqual(query.content);
+                    done();
+                });
+        });
     });
 
     describe('post', function () {
@@ -129,6 +138,27 @@ define(function (require) {
         it('自动序列化参数并进行encodeURIComponent处理', function (done) {
             var data = {content: '中文'};
             assertPost(done, URL.ECHO, data, '中文');
+        });
+
+        it('自动序列化参数支持数组', function (done) {
+            var data = {name:['treelte', 'baidu'], age: 10};
+            assertRequest(
+                done,
+                URL.INFO,
+                {
+                    method: 'POST',
+                    data: data
+                },
+                function (res) {
+                    res = JSON.parse(res).params;
+                    return true
+                        && Object.keys(res).length == Object.keys(data).length
+                        && res.name.length == data.name.length
+                        && res.name[0] == data.name[0]
+                        && res.name[1] == data.name[1]
+                        && res.age == data.age
+                }
+            );
         });
 
         it('Content-Type默认添加application/x-www-form-urlencoded', function (done) {

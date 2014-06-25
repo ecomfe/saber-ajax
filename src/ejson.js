@@ -56,9 +56,10 @@ define(function (require) {
     }
 
     var exports =  {
-        get: function (url) {
+        get: function (url, query) {
             var options = {
-                method: 'GET'
+                method: 'GET',
+                data: query
             };
 
             return request(url, options);
