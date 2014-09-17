@@ -369,7 +369,9 @@ define(function (require) {
                 }
             );
 
-        if (options.method == METHOD_POST && !findHeader(headers, 'Content-Type')) {
+        if (options.method == METHOD_POST
+            && !findHeader(headers, 'Content-Type')
+            && !(options.data instanceof FormData)) {
             headers['Content-Type'] = 'application/x-www-form-urlencoded';
         }
 
