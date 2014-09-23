@@ -175,6 +175,26 @@ define(function (require) {
             );
         });
 
+        if (window.FormData) {
+            it('使用FormData时不默认添加`content-type`', function (done) {
+                var data = new FormData();
+                data.append('name', 'treelite');
+
+                assertRequest(
+                    done,
+                    URL.INFO,
+                    {
+                        method: 'POST',
+                        data: data
+                    },
+                    function (res) {
+                        res = JSON.parse(res);
+                        return !res['content-type'];
+                    }
+                );
+            });
+        }
+
         it('不覆盖已有的Content-Type设置', function (done) {
             assertRequest(
                 done,

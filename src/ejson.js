@@ -23,7 +23,7 @@ define(function (require) {
 
         req.then(
             function (res) {
-                try{
+                try {
                     res = JSON.parse(res);
                     if (!res.status) {
                         resolver.fulfill(res.data);
@@ -33,14 +33,14 @@ define(function (require) {
                     }
                 }
                 catch (e) {
-                    resolver.reject({status: ERROR.DATA});
+                    resolver.reject({ status: ERROR.DATA });
                 }
             },
             function (reason) {
                 if (typeof reason == 'string') {
                     reason = ERROR[reason.toUpperCase()] || ERROR.ERROR;
                 }
-                resolver.reject({status: reason});
+                resolver.reject({ status: reason });
             }
         );
 
