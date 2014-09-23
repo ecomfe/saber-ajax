@@ -308,6 +308,7 @@ define(function (require) {
      * url字符串添加query
      *
      * @inner
+     * @param {string} url
      * @param {Object|string} query
      * @return {string}
      */
@@ -371,7 +372,8 @@ define(function (require) {
 
         if (options.method == METHOD_POST
             && !findHeader(headers, 'Content-Type')
-            && !(options.data instanceof FormData)) {
+            && !(options.data instanceof FormData)
+        ) {
             headers['Content-Type'] = 'application/x-www-form-urlencoded';
         }
 
@@ -457,7 +459,7 @@ define(function (require) {
      *
      * @public
      * @param {string} url
-     * @param {string|Object} url
+     * @param {string|Object} data
      * @return {Requester}
      */
     exports.post = function (url, data) {
