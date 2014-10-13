@@ -370,9 +370,11 @@ define(function (require) {
                 }
             );
 
+        var useFormData = window.FormData ? options.data instanceof FormData : false;
+
         if (options.method == METHOD_POST
             && !findHeader(headers, 'Content-Type')
-            && !(options.data instanceof FormData)
+            && !useFormData
         ) {
             headers['Content-Type'] = 'application/x-www-form-urlencoded';
         }
