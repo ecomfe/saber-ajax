@@ -8,9 +8,9 @@
         <script src="http://saberlabs.github.io/static/jasmine/2.0.0/jasmine.js"></script>
         <script src="http://saberlabs.github.io/static/jasmine/2.0.0/jasmine-html.js"></script>
         <script src="http://saberlabs.github.io/static/jasmine/2.0.0/console.js"></script>
-        <script src="http://saberlabs.github.io/static/jasmine/2.0.0/boot.js"></script>
+        <script src="http://s1.bdstatic.com/r/www/cache/ecom/esl/1-8-6/esl.js"></script>
+        <script src="http://saberlabs.github.io/static/jasmine/2.0.0/amd-boot.js"></script>
         <script src="http://saberlabs.github.io/static/jasmine/2.0.0/console-reporter.js"></script>
-        <script src="http://s1.bdstatic.com/r/www/cache/ecom/esl/1-8-4/esl.js"></script>
     </head>
     <body>
         <script>
@@ -38,8 +38,10 @@
                 }
             ]
         });
-        
-        require(['ajax.spec']);
+
+        require(['boot', 'ajax.spec'], function (boot) {
+            boot();
+        });
 
         </script>
     </body>
