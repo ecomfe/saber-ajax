@@ -33,14 +33,14 @@ define(function (require) {
                     }
                 }
                 catch (e) {
-                    resolver.reject({ status: ERROR.DATA });
+                    resolver.reject({status: ERROR.DATA});
                 }
             },
             function (reason) {
-                if (typeof reason == 'string') {
+                if (typeof reason === 'string') {
                     reason = ERROR[reason.toUpperCase()] || ERROR.ERROR;
                 }
-                resolver.reject({ status: reason });
+                resolver.reject({status: reason});
             }
         );
 

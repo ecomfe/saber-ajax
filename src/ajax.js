@@ -26,7 +26,7 @@ define(function (require) {
         BLOB: 'blob',
         JSON: 'json'
     };
-    
+
     // 默认responseType
     var DEF_RESPONSE_TYPE = RESPONSE_TYPE_ENUM.TEXT;
 
@@ -77,8 +77,7 @@ define(function (require) {
      * @return {boolean}
      */
     function isFunction(value) {
-        return '[object Function]' 
-            == Object.prototype.toString.call(value);
+        return typeof value === 'function';
     }
 
     /**
@@ -90,7 +89,7 @@ define(function (require) {
      */
     function isString(value) {
         return '[object String]'
-            == Object.prototype.toString.call(value);
+            === Object.prototype.toString.call(value);
     }
 
     /**
@@ -128,7 +127,7 @@ define(function (require) {
      */
     function getResponseData(xhr) {
         var res;
-        if (xhr.responseType 
+        if (xhr.responseType
             && xhr.responseType !== DEF_RESPONSE_TYPE
         ) {
             res = xhr.response;
@@ -150,7 +149,7 @@ define(function (require) {
                 var status = xhr.status;
 
                 if ((status >= 200 && status < 300)
-                    || status == 304
+                    || status === 304
                 ) {
                     resolver.fulfill(getResponseData(xhr));
                 }
@@ -349,13 +348,13 @@ define(function (require) {
         var xhr = createRequest();
         options = extend({}, options || {});
 
-        if (options.method == METHOD_GET && options.data) {
+        if (options.method === METHOD_GET && options.data) {
             url = appendQuery(url, options.data);
             options.data = null;
         }
 
         xhr.open(
-            options.method || METHOD_GET, 
+            options.method || METHOD_GET,
             url,
             options.async || true,
             options.username,
@@ -372,7 +371,7 @@ define(function (require) {
 
         var useFormData = window.FormData ? options.data instanceof FormData : false;
 
-        if (options.method == METHOD_POST
+        if (options.method === METHOD_POST
             && !findHeader(headers, 'Content-Type')
             && !useFormData
         ) {
