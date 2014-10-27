@@ -16,7 +16,10 @@ $ edp import saber-ajax
 ## Usage
 
 ```javascript
+var ajax = require('saber-ajax');
+
 var request = ajax.get(url);
+
 request.then(
     // 请求完成
     // data为responseText
@@ -77,7 +80,7 @@ request.then(
 
 注册全局事件
 
-* **event** `{string}` 事件名称，具体支持的事件请参照事件说明
+* **event** `{string}` 事件名称，具体支持的事件[请参照事件说明](#events)
 * **fn** `{Function}` 事件处理函数
 
 
@@ -137,25 +140,25 @@ ajax.on('fail', function (req, error) {
     * `'abort'` `{string}` 请求中止
     * `HTTP Status Code` `{number}` 其它情况为请求返回的HTTP状态码
 
-#### .success(success)
+#### success(success)
 
-添加请求成功处理，相当于`.then(success)`
+添加请求成功处理，相当于`then(success)`
 
 * **success** `{Function}` 成功处理函数
 
-#### .fail(fail)
+#### fail(fail)
 
-添加请求失败处理 相当于`.then(null, fail)`
+添加请求失败处理 相当于`then(null, fail)`
 
 * **fail** `{Function}` 失败处理函数
 
-#### .ensure(callback)
+#### ensure(callback)
 
-添加请求完成处理函数，不论请求是成功还是失败都会被调用，相当于`.then(callback, callback)`
+添加请求完成处理函数，不论请求是成功还是失败都会被调用，相当于`then(callback, callback)`
 
 * **callback** `{Function}` 完成处理函数
 
-#### .abort()
+#### abort()
 
 中止请求
 
