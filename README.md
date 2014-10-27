@@ -49,7 +49,7 @@ request.then(
 
 * **url** `{string}` 请求地址
 * **query** `{Object=}` 查询条件，会自动进行`encodeURIComponent`处理
-* _return_ `{Requester}`
+* _return_ `{Requester}` 请求对象[Requester](#requester)
 
 #### post(url[, data])
 
@@ -57,7 +57,7 @@ request.then(
 
 * **url** `{string}` 请求地址
 * **data** `{Object|string=}` 请求数据，可选。使用`{Object}`类型时请注意：暂时只支持单一层级序列化，不支持多层级（比如`{date: {begin: '2012', end: '2013'}}`）
-* _return_ `{Requester}`
+* _return_ `{Requester}` 请求对象[Requester](#requester)
 
 #### request(url[, options])
 
@@ -168,14 +168,14 @@ ajax.on('fail', function (req, error) {
 
 全局请求成功事件，任意请求成功时触发
 
-* **req** `{Requester}` 请求对应的[Requester](#requester)对象
+* **req** `{Requester}` 请求对象[Requester](#requester)
 * **data** `{*}` 请求返回的内容
 
 #### fail
 
 全局请求失败事件，任意请求失败时触发
 
-* **req** `{Requester}` 请求对应的[Requester](#requester)对象
+* **req** `{Requester}` 请求对象[Requester](#requester)
 * **error** `{*}` 错误信息（参考[request.then](#then-onfulfill-onreject-)关于错误信息的描述）
 
 ## Test
