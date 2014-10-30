@@ -17,6 +17,10 @@ define(function (require) {
         ERROR: -500 // 未知错误
     };
 
+    var exports = {};
+
+    Emitter.mixin(exports);
+
     function request(url, options) {
         var resolver = new Resolver();
         var req = ajax.request(url, options);
@@ -55,31 +59,27 @@ define(function (require) {
         return req;
     }
 
-    var exports =  {
-        get: function (url, query) {
-            var options = {
-                method: 'GET',
-                data: query
-            };
+    exports.get = function (url, query) {
+        var options = {
+            method: 'GET',
+            data: query
+        };
 
-            return request(url, options);
-        },
-
-        post: function (url, data) {
-            var options = {
-                method: 'POST',
-                data: data
-            };
-
-            return request(url, options);
-        },
-
-        request: request,
-
-        ERROR: extend({}, ERROR)
+        return request(url, options);
     };
 
-    Emitter.mixin(exports);
+    exports.post = function (url, data) {
+        var options = {
+            method: 'POST',
+            data: data
+        };
+
+        return request(url, options);
+    };
+
+    exports.request = request;
+
+    exports.ERROR = extend({}, ERROR);
 
     return exports;
 });

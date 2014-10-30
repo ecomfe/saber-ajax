@@ -108,18 +108,6 @@ define(function (require) {
     }
 
     /**
-     * 清除事件
-     *
-     * @inner
-     * @param {Object} xhr
-     */
-    function clearXHREvents(xhr) {
-        each(eventHandler, function (key) {
-            xhr['on' + key] = null;
-        });
-    }
-
-    /**
      * 根据reponseType获取返回内容
      *
      * @inner
@@ -148,7 +136,8 @@ define(function (require) {
 
                 var status = xhr.status;
 
-                if ((status >= 200 && status < 300)
+                if (status >= 200
+                    && status < 300
                     || status === 304
                 ) {
                     resolver.fulfill(getResponseData(xhr));
@@ -183,6 +172,18 @@ define(function (require) {
             };
         }
     };
+
+    /**
+     * 清除事件
+     *
+     * @inner
+     * @param {Object} xhr
+     */
+    function clearXHREvents(xhr) {
+        each(eventHandler, function (key) {
+            xhr['on' + key] = null;
+        });
+    }
 
     /**
      * 数据请求包装类
