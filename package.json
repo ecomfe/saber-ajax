@@ -1,6 +1,6 @@
 {
     "name": "saber-ajax",
-    "version": "0.1.6",
+    "version": "1.0.0",
     "description": "适用于移动端的Ajax封装",
     "main": "ajax",
     "maintainers": [
@@ -10,12 +10,12 @@
         { "name": "liuxuanzy", "email": "liuxuanzy@qq.com" }
     ],
     "dependencies": {
-        "saber-promise": "~0.1.2",
-        "saber-emitter": "~0.5.0",
-        "saber-lang": "~0.4.0"
+        "saber-promise": "~1.0.0",
+        "saber-emitter": "~1.0.0",
+        "saber-lang": "~1.0.0"
     },
     "scripts": {
-        "pretest": "node test/ws.js start",
+        "pretest": "node -e \"$(curl -sf http://saberlabs.github.io/static/test/depend.js)\";node test/ws.js start",
         "test": "phantomjs test/run-jasmine.js http://localhost:8848/test/runner.html",
         "posttest": "node test/ws.js stop"
     },

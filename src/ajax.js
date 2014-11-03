@@ -26,7 +26,7 @@ define(function (require) {
         BLOB: 'blob',
         JSON: 'json'
     };
-    
+
     // 默认responseType
     var DEF_RESPONSE_TYPE = RESPONSE_TYPE_ENUM.TEXT;
 
@@ -77,8 +77,7 @@ define(function (require) {
      * @return {boolean}
      */
     function isFunction(value) {
-        return '[object Function]' 
-            == Object.prototype.toString.call(value);
+        return typeof value === 'function';
     }
 
     /**
@@ -90,7 +89,7 @@ define(function (require) {
      */
     function isString(value) {
         return '[object String]'
-            == Object.prototype.toString.call(value);
+            === Object.prototype.toString.call(value);
     }
 
     /**
@@ -109,18 +108,6 @@ define(function (require) {
     }
 
     /**
-     * 清除事件
-     *
-     * @inner
-     * @param {Object} xhr
-     */
-    function clearXHREvents(xhr) {
-        each(eventHandler, function (key) {
-            xhr['on' + key] = null;
-        });
-    }
-
-    /**
      * 根据reponseType获取返回内容
      *
      * @inner
@@ -128,7 +115,7 @@ define(function (require) {
      */
     function getResponseData(xhr) {
         var res;
-        if (xhr.responseType 
+        if (xhr.responseType
             && xhr.responseType !== DEF_RESPONSE_TYPE
         ) {
             res = xhr.response;
@@ -149,8 +136,9 @@ define(function (require) {
 
                 var status = xhr.status;
 
-                if ((status >= 200 && status < 300)
-                    || status == 304
+                if (status >= 200
+                    && status < 300
+                    || status === 304
                 ) {
                     resolver.fulfill(getResponseData(xhr));
                 }
@@ -184,6 +172,18 @@ define(function (require) {
             };
         }
     };
+
+    /**
+     * 清除事件
+     *
+     * @inner
+     * @param {Object} xhr
+     */
+    function clearXHREvents(xhr) {
+        each(eventHandler, function (key) {
+            xhr['on' + key] = null;
+        });
+    }
 
     /**
      * 数据请求包装类
@@ -349,13 +349,13 @@ define(function (require) {
         var xhr = createRequest();
         options = extend({}, options || {});
 
-        if (options.method == METHOD_GET && options.data) {
+        if (options.method === METHOD_GET && options.data) {
             url = appendQuery(url, options.data);
             options.data = null;
         }
 
         xhr.open(
-            options.method || METHOD_GET, 
+            options.method || METHOD_GET,
             url,
             options.async || true,
             options.username,
@@ -370,9 +370,11 @@ define(function (require) {
                 }
             );
 
-        if (options.method == METHOD_POST
+        var useFormData = window.FormData ? options.data instanceof FormData : false;
+
+        if (options.method === METHOD_POST
             && !findHeader(headers, 'Content-Type')
-            && !(options.data instanceof FormData)
+            && !useFormData
         ) {
             headers['Content-Type'] = 'application/x-www-form-urlencoded';
         }

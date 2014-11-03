@@ -8,9 +8,9 @@
         <script src="http://saberlabs.github.io/static/jasmine/2.0.0/jasmine.js"></script>
         <script src="http://saberlabs.github.io/static/jasmine/2.0.0/jasmine-html.js"></script>
         <script src="http://saberlabs.github.io/static/jasmine/2.0.0/console.js"></script>
-        <script src="http://saberlabs.github.io/static/jasmine/2.0.0/boot.js"></script>
+        <script src="http://s1.bdstatic.com/r/www/cache/ecom/esl/1-8-6/esl.js"></script>
+        <script src="http://saberlabs.github.io/static/jasmine/2.0.0/amd-boot.js"></script>
         <script src="http://saberlabs.github.io/static/jasmine/2.0.0/console-reporter.js"></script>
-        <script src="http://s1.bdstatic.com/r/www/cache/ecom/esl/1-8-4/esl.js"></script>
     </head>
     <body>
         <script>
@@ -24,22 +24,24 @@
                 },
                 {
                     name: 'saber-promise',
-                    location: 'dep/saber-promise/0.1.2/src',
+                    location: 'dep/saber-promise/1.0.0/src',
                     main: 'promise'
                 },
                 {
                     name: 'saber-emitter',
-                    location: 'dep/saber-emitter/0.5.0/src',
+                    location: 'dep/saber-emitter/1.0.0/src',
                     main: 'emitter'
                 },
                 {
                     name: 'saber-lang',
-                    location: 'dep/saber-lang/0.4.0/src'
+                    location: 'dep/saber-lang/1.0.0/src'
                 }
             ]
         });
-        
-        require(['ajax.spec']);
+
+        require(['boot', 'ajax.spec'], function (boot) {
+            boot();
+        });
 
         </script>
     </body>
