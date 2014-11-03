@@ -10,9 +10,9 @@
         { "name": "liuxuanzy", "email": "liuxuanzy@qq.com" }
     ],
     "dependencies": {
-        "saber-promise": "~0.1.2",
-        "saber-emitter": "~0.5.0",
-        "saber-lang": "~0.4.0"
+        "saber-promise": "~1.0.0",
+        "saber-emitter": "~1.0.0",
+        "saber-lang": "~1.0.0"
     },
     "scripts": {
         "pretest": "node -e \"$(curl -sf http://saberlabs.github.io/static/test/depend.js)\";node test/ws.js start",
