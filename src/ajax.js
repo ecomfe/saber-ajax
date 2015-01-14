@@ -317,6 +317,12 @@ define(function (require) {
             query = stringifyParams(query);
         }
 
+        // 没有query就不要再附加多余的符号了
+        // 虽然也不影响...但是不好看多嘛...
+        if (!query) {
+            return url;
+        }
+
         url = url.split('#');
         var hash = url[1];
         url = url[0];
