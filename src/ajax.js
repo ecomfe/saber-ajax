@@ -34,9 +34,9 @@ define(function (require) {
      * 查找header定义的字段
      * 忽略大小写（RFC2616 #3.10）
      *
-     * @param {Object} headers
-     * @param {string} tag
-     * @return {Boolean}
+     * @param {Object} headers 请求头信息集合
+     * @param {string} tag 信息名称
+     * @return {boolean}
      */
     function findHeader(headers, tag) {
         var tags = Object.keys(headers).map(function (tag) {
@@ -60,8 +60,8 @@ define(function (require) {
      * 遍历Object
      *
      * @inner
-     * @param {Object} object
-     * @param {Function(string,string)} callback
+     * @param {Object} object 对象
+     * @param {function(string,string)} callback 回调函数
      */
     function each(object, callback) {
         Object.keys(object).forEach(function (key) {
@@ -73,7 +73,7 @@ define(function (require) {
      * 函数判断
      *
      * @inner
-     * @param {Object} value
+     * @param {Object} value 变量
      * @return {boolean}
      */
     function isFunction(value) {
@@ -84,7 +84,7 @@ define(function (require) {
      * 字符串判断
      *
      * @inner
-     * @param {Object} value
+     * @param {Object} value 变量
      * @return {boolean}
      */
     function isString(value) {
@@ -111,6 +111,7 @@ define(function (require) {
      * 根据reponseType获取返回内容
      *
      * @inner
+     * @param {Object} xhr 请求对象
      * @return {*}
      */
     function getResponseData(xhr) {
@@ -177,7 +178,7 @@ define(function (require) {
      * 清除事件
      *
      * @inner
-     * @param {Object} xhr
+     * @param {Object} xhr 请求对象
      */
     function clearXHREvents(xhr) {
         each(eventHandler, function (key) {
@@ -190,8 +191,8 @@ define(function (require) {
      * 结合`XMLHttpRequest`与`Promise`
      *
      * @constructor
-     * @param {XMLHttpRequest} xhr
-     * @param {Resolver} resolver
+     * @param {XMLHttpRequest} xhr 请求对象
+     * @param {Resolver} resolver Promise宿主
      * @param {Object} options 请求配置参数
      */
     function Requester(xhr, resolver, options) {
@@ -227,7 +228,7 @@ define(function (require) {
      * 请求成功处理
      *
      * @public
-     * @param {Function} success
+     * @param {Function} success 请求成功的回调函数
      * @return {Promise}
      */
     Requester.prototype.success = function (success) {
@@ -239,7 +240,7 @@ define(function (require) {
      * 请求失败处理
      *
      * @public
-     * @param {Function} fail
+     * @param {Function} fail 请求失败的回调函数
      * @return {Promise}
      */
     Requester.prototype.fail = function (fail) {
@@ -252,7 +253,7 @@ define(function (require) {
      * 无论请求是否成功都会被调用
      *
      * @public
-     * @param {Function} callback
+     * @param {Function} callback 请求完成的回调函数
      * @return {Promise}
      */
     Requester.prototype.ensure = function (callback) {
@@ -285,7 +286,7 @@ define(function (require) {
      * 不支持多层嵌套的Object
      *
      * @inner
-     * @param {Object} params
+     * @param {Object} params 参数
      * @return {string}
      */
     function stringifyParams(params) {
@@ -308,8 +309,8 @@ define(function (require) {
      * url字符串添加query
      *
      * @inner
-     * @param {string} url
-     * @param {Object|string} query
+     * @param {string} url 请求地址
+     * @param {Object|string} query 请求参数
      * @return {string}
      */
     function appendQuery(url, query) {
@@ -336,7 +337,7 @@ define(function (require) {
      * 发起ajax请求
      *
      * @inner
-     * @param {string} url
+     * @param {string} url 请求地址
      * @param {Object} options 请求配置项
      * @param {string=} options.method 请求方式，默认为GET
      * @param {string|Object=} options.data 请求参数
@@ -372,7 +373,9 @@ define(function (require) {
         var headers = extend(
                 options.headers || {},
                 {
+                    /* eslint-disable fecs-camelcase */
                     'X-Requested-With': 'XMLHttpRequest'
+                    /* eslint-enable fecs-camelcase */
                 }
             );
 
@@ -449,8 +452,8 @@ define(function (require) {
      * 发起get异步请求
      *
      * @public
-     * @param {string} url
-     * @param {Object=} query
+     * @param {string} url 请求地址
+     * @param {Object=} query 查询条件
      * @return {Requester}
      */
     exports.get = function (url, query) {
@@ -466,8 +469,8 @@ define(function (require) {
      * 发起post异步请求
      *
      * @public
-     * @param {string} url
-     * @param {string|Object} data
+     * @param {string} url 请求地址
+     * @param {string|Object} data 请求数据
      * @return {Requester}
      */
     exports.post = function (url, data) {
