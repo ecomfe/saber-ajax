@@ -1,28 +1,40 @@
 {
-    "name": "saber-ajax",
-    "version": "1.0.0",
-    "description": "适用于移动端的Ajax封装",
-    "main": "ajax",
-    "maintainers": [
-        { "name": "treelite", "email": "c.xinle@gmail.com" }
-    ],
-    "contributors": [
-        { "name": "liuxuanzy", "email": "liuxuanzy@qq.com" }
-    ],
+  "name": "saber-ajax",
+  "version": "1.0.0",
+  "description": "适用于移动端的Ajax封装",
+  "main": "ajax",
+  "maintainers": [
+    {
+      "name": "treelite",
+      "email": "c.xinle@gmail.com"
+    }
+  ],
+  "contributors": [
+    {
+      "name": "liuxuanzy",
+      "email": "liuxuanzy@qq.com"
+    }
+  ],
+  "dependencies": {
+    "request": "^2.53.0",
+    "saber-promise": "^1.0.0"
+  },
+  "edp": {
     "dependencies": {
-        "saber-promise": "~1.0.0",
-        "saber-emitter": "~1.0.0",
-        "saber-lang": "~1.0.0"
-    },
-    "scripts": {
-        "pretest": "node -e \"$(curl -sf http://saberlabs.github.io/static/test/depend.js)\";node test/ws.js start",
-        "test": "phantomjs test/run-jasmine.js http://localhost:8848/test/runner.html",
-        "posttest": "node test/ws.js stop"
-    },
-    "devDependencies": {
-        "phantomjs": "~1.9.7-1"
-    },
-    "license": "BSD",
-    "repository": "git://github.com/ecomfe/saber-ajax.git",
-    "bugs": "https://github.com/ecomfe/saber-ajax/issues"
+      "saber-promise": "~1.0.0",
+      "saber-emitter": "~1.0.0",
+      "saber-lang": "~1.0.0"
+    }
+  },
+  "scripts": {
+    "pretest": "node -e \"$(curl -sf http://saberlabs.github.io/static/test/depend.js)\";node test/ws.js start",
+    "test": "phantomjs test/run-jasmine.js http://localhost:8848/test/runner.html",
+    "posttest": "node test/ws.js stop"
+  },
+  "devDependencies": {
+    "phantomjs": "~1.9.7-1"
+  },
+  "license": "BSD",
+  "repository": "git://github.com/ecomfe/saber-ajax.git",
+  "bugs": "https://github.com/ecomfe/saber-ajax/issues"
 }
