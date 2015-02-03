@@ -6,9 +6,12 @@
 /* eslint-env node */
 
 var querystring = require('querystring');
-var Request = require('./lib/Request');
+var Requester = require('./lib/Requester');
+var extend = require('saber-lang').extend;
 var METHOD_GET = 'GET';
 var METHOD_POST = 'POST';
+
+var config = require('./lib/config');
 
 /**
  * url字符串添加query
@@ -38,7 +41,7 @@ function appendQuery(url, query) {
  * @param {boolean} options.stringify 是否自动序列化请求参数，默认为`true`
  * @param {Object=} options.headers 请求头信息
  * @param {number=} options.timeout 超时时间
- * @return {Request}
+ * @return {Requester}
  */
 function request(url, options) {
     options = options || {};
@@ -59,7 +62,12 @@ function request(url, options) {
         data = '';
     }
 
-    return new Request({
+    if (config.host) {
+        url = config.host + url;
+    }
+
+    return new Requester({
+        handler: config.handler,
         url: url,
         method: method,
         headers: headers,
@@ -70,8 +78,21 @@ function request(url, options) {
 // Exports
 
 /**
+ * 全局配置
+ *
+ * @public
+ * @param {Object} options 配置项
+ * @param {string=} options.host 请求默认的host
+ * @param {Function=} options.handler 请求响应处理函数
+ */
+exports.config = function (options) {
+    config = extend(config, options);
+};
+
+/**
  * 发送请求
  *
+ * @public
  * @param {string} url 请求地址
  * @param {Object=} options 请求配置项
  * @param {string=} options.method 请求方式，默认为`GET`
@@ -114,4 +135,10 @@ exports.post = function (url, data) {
     };
 
     return request(url, options);
+};
+
+// 导出默认提供的处理器
+exports.handler = {
+    'default': require('./lib/handler/default'),
+    'ejson': require('./lib/handler/ejson')
 };
