@@ -4,6 +4,7 @@ define(function (require, exports, module) {
      * @author treelite(c.xinle@gmail.com)
      */
 
+    var util = require('../util');
     var inherits = require('saber-lang').inherits;
     var Requester = require('./Requester');
 
@@ -45,7 +46,12 @@ define(function (require, exports, module) {
         var resolver = this.resolver;
 
         if (error) {
-            resolver.reject({status: ERROR.ERROR, statusInfo: error});
+            if (util.isString(error)) {
+                resolver.reject({status: ERROR[error.toUpperCase()] || ERROR.ERROR});
+            }
+            else {
+                resolver.reject({status: ERROR.ERROR, statusInfo: error});
+            }
             return;
         }
 
