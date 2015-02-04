@@ -472,7 +472,7 @@ define(function (require) {
 
             ajax.once('success', function (req) {
                 expect(req.url).toBe(url);
-                expect(req.getData()).toBe('hello');
+                expect(req.xhr.responseText).toEqual('hello');
                 done();
             });
         });
