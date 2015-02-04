@@ -29,11 +29,12 @@
   },
   "scripts": {
     "pretest": "node test/ws.js start",
-    "test": "phantomjs test/run-jasmine.js http://localhost:8848/test/runner.html",
+    "test": "jasmine-node --verbose test/server && phantomjs test/run-jasmine.js http://localhost:8848/test/runner.html",
     "posttest": "node test/ws.js stop"
   },
   "devDependencies": {
     "c2a": "^0.2.0",
+    "jasmine-node": "^2.0.0-beta4",
     "phantomjs": "~1.9.7-1"
   },
   "license": "BSD",
