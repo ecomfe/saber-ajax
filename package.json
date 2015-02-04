@@ -29,7 +29,7 @@
   },
   "scripts": {
     "pretest": "node test/ws.js start",
-    "test": "jasmine-node --verbose test/server && phantomjs test/run-jasmine.js http://localhost:8848/test/runner.html",
+    "test": "jasmine-node --verbose test/server && phantomjs test/client/run-jasmine.js http://localhost:8848/test/client/runner.html",
     "posttest": "node test/ws.js stop"
   },
   "devDependencies": {
