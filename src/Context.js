@@ -15,7 +15,7 @@ define(function (require) {
         Emitter.mixin(this);
     }
 
-    inheriits(Context, Abstract);
+    inherits(Context, Abstract);
 
     return Context;
 });

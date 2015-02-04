@@ -155,7 +155,7 @@ define(function (require) {
             xhr.send(data);
         }
         else if (!util.isString(data) && options.stringify !== false) {
-            xhr.send(util.stringifyParams(data));
+            xhr.send(util.stringify(data));
         }
         else {
             xhr.send(data);
@@ -164,7 +164,7 @@ define(function (require) {
         // 绑定全局事件
         requester.then(
             bind(requester.context.emit, requester.context, 'success', requester),
-            bind(requester.context.emit, requester.context, 'fail', requester),
+            bind(requester.context.emit, requester.context, 'fail', requester)
         );
 
         return xhr;
