@@ -28,11 +28,12 @@
     }
   },
   "scripts": {
-    "pretest": "node -e \"$(curl -sf http://saberlabs.github.io/static/test/depend.js)\";node test/ws.js start",
+    "pretest": "node test/ws.js start",
     "test": "phantomjs test/run-jasmine.js http://localhost:8848/test/runner.html",
     "posttest": "node test/ws.js stop"
   },
   "devDependencies": {
+    "c2a": "^0.2.0",
     "phantomjs": "~1.9.7-1"
   },
   "license": "BSD",
