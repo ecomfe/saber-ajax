@@ -65,7 +65,7 @@ define(function (require, exports, module) {
      *
      * @public
      * @param {*} str 变量
-     * @param {boolean}
+     * @return {boolean}
      */
     exports.isString = function (str) {
         return typeof str === 'string' || str instanceof String;
@@ -85,5 +85,5 @@ define(function (require, exports, module) {
             });
 
         return tags.indexOf(tag.toLowerCase()) >= 0;
-    }
+    };
 });

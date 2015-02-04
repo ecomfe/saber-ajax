@@ -50,7 +50,7 @@ exports.getProcessors = function () {
         to: 'src/',
         process: function (file, context, callback) {
             file.outputPath = '../' + file.path.replace(this.from, this.to);
-            file.setData(c2a(file.data));
+            file.setData(c2a(file.data) + '\n');
             callback();
         }
     }];
