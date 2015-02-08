@@ -1,9 +1,10 @@
 /**
- * @file ajax测试用例
+ * @file AJAX test spec
  * @author treelite(c.xinle@gmail.com)
  */
 
 define(function (require) {
+
     var ajax = require('saber-ajax');
 
     var URL = {
@@ -70,8 +71,10 @@ define(function (require) {
     }
 
     function isPhantomJS() {
-        return navigator.userAgent.indexOf("PhantomJS") > 0;
+        return typeof navigator !== 'undefined' && navigator.userAgent.indexOf("PhantomJS") > 0;
     }
+
+    var isNode = typeof process !== 'undefined';
 
     describe('get', function () {
         describe('各状态码正确响应', function () {
@@ -175,7 +178,7 @@ define(function (require) {
             );
         });
 
-        if (window.FormData) {
+        if (!isNode && window.FormData) {
             it('使用FormData时不默认添加`content-type`', function (done) {
                 var data = new FormData();
                 data.append('name', 'treelite');
@@ -239,18 +242,20 @@ define(function (require) {
             });
         });
 
-        it('同步请求', function () {
-            var req = ajax.request(
-                URL.ECHO + '?content=hello',
-                {
-                    async: false
-                }
-            );
+        if (!isNode) {
+            it('同步请求', function () {
+                var req = ajax.request(
+                    URL.ECHO + '?content=hello',
+                    {
+                        async: false
+                    }
+                );
 
-            req.then(function (data) {
-                expect(data).toEqual('hello');
+                req.then(function (data) {
+                    expect(data).toEqual('hello');
+                });
             });
-        });
+        }
 
         it('abort异步请求', function (done) {
             var req = ajax.request(URL.SLEEP + '?time=1000');
@@ -258,7 +263,6 @@ define(function (require) {
             req.then(
                 function (res) {
                     expect(res).toEqual('abort');
-                    done();
                 },
                 function (error) {
                     expect(error).toEqual('abort');
@@ -286,7 +290,7 @@ define(function (require) {
                 );
             });
 
-            if (window.FormData) {
+            if (!isNode && window.FormData) {
                 it('FormData参数不进行序列化', function (done) {
                     var data = new FormData();
                     data.append('content', 'hello');
@@ -341,22 +345,31 @@ define(function (require) {
             });
         });
 
-        describe('超时设置', function () {
-            // 先检查浏览器是否支持timeout
-            var testXHR = new XMLHttpRequest();
-            if (testXHR.timeout !== undefined) {
-                it('设置成功', function (done) {
-                    assertRequest(
-                        done,
-                        URL.SLEEP + '?time=1000',
-                        {
-                            timeout: 500
-                        },
-                        null,
-                        'timeout'
-                    );
-                });
+    });
 
+    describe('超时设置', function () {
+        var testXHR;
+        if (typeof XMLHttpRequest !== 'undefined') {
+            testXHR = new XMLHttpRequest();
+        }
+        else {
+            testXHR = {};
+        }
+        // 先检查浏览器是否支持timeout
+        if (isNode || testXHR.timeout !== undefined) {
+            it('设置成功', function (done) {
+                assertRequest(
+                    done,
+                    URL.SLEEP + '?time=1000',
+                    {
+                        timeout: 500
+                    },
+                    null,
+                    'timeout'
+                );
+            });
+
+            if (!isNode) {
                 it('忽略给同步请求设置的超时', function () {
                     var req = ajax.request(
                         URL.SLEEP + '?time=1000',
@@ -376,13 +389,15 @@ define(function (require) {
                     );
                 });
             }
-            else {
-                it('当前浏览器不支持timeout设置', function () {
-                    expect(true).toBeTruthy();
-                });
-            }
-        });
+        }
+        else {
+            it('当前浏览器不支持timeout设置', function () {
+                expect(true).toBeTruthy();
+            });
+        }
+    });
 
+    if (!isNode) {
         describe('responseType设置', function () {
             if (window.ArrayBuffer) {
                 it('arraybuffer', function (done) {
@@ -426,8 +441,7 @@ define(function (require) {
 
         });
 
-        //TODO Progress事件测试
-    });
+    }
 
     describe('Requester', function () {
         it('.success()', function (done) {
@@ -465,60 +479,63 @@ define(function (require) {
         });
     });
 
-    describe('全局事件', function () {
-        it('success', function (done) {
-            var url = URL.ECHO + '?content=hello';
-            var req = ajax.get(url);
+    if (!isNode) {
+        describe('全局事件', function () {
+            it('success', function (done) {
+                var url = URL.ECHO + '?content=hello';
+                var req = ajax.get(url);
 
-            ajax.once('success', function (req) {
-                expect(req.url).toBe(url);
-                expect(req.getData()).toBe('hello');
-                done();
+                ajax.once('success', function (req) {
+                    expect(req.url).toBe(url);
+                    expect(req.xhr.responseText).toEqual('hello');
+                    done();
+                });
+            });
+
+            it('fail', function (done) {
+                var url = URL.ECHO + '?status=500';
+                var req = ajax.get(url);
+
+                ajax.once('fail', function (req) {
+                    expect(req.url).toBe(url);
+                    done();
+                });
+            });
+
+            it('handleSuccess', function () {
+                var url = URL.ECHO + '?content=hello';
+                var req = ajax.get(url);
+
+                ajax.once('success', function (req) {
+                    expect(req.url).toBe(url);
+                    expect(req.handleSuccess).toBeFalse();
+                });
+
+                req = ajax.get(url).success(function () {});
+
+                ajax.once('success', function (req) {
+                    expect(req.url).toBe(url);
+                    expect(req.handleSuccess).toBeThury();
+                });
+            });
+
+            it('handleFail', function () {
+                var url = URL.ECHO + '?status=500';
+                var req = ajax.get(url);
+
+                ajax.once('fail', function (req) {
+                    expect(req.url).toBe(url);
+                    expect(req.handleFail).toBeFalse();
+                });
+
+                req = ajax.get(url).fail(function () {});
+
+                ajax.once('fail', function (req) {
+                    expect(req.url).toBe(url);
+                    expect(req.handleFail).toBeThury();
+                });
             });
         });
+    }
 
-        it('fail', function (done) {
-            var url = URL.ECHO + '?status=500';
-            var req = ajax.get(url);
-
-            ajax.once('fail', function (req) {
-                expect(req.url).toBe(url);
-                done();
-            });
-        });
-
-        it('handleSuccess', function () {
-            var url = URL.ECHO + '?content=hello';
-            var req = ajax.get(url);
-
-            ajax.once('success', function (req) {
-                expect(req.url).toBe(url);
-                expect(req.handleSuccess).toBeFalse();
-            });
-
-            req = ajax.get(url).success(function () {});
-
-            ajax.once('success', function (req) {
-                expect(req.url).toBe(url);
-                expect(req.handleSuccess).toBeThury();
-            });
-        });
-
-        it('handleFail', function () {
-            var url = URL.ECHO + '?status=500';
-            var req = ajax.get(url);
-
-            ajax.once('fail', function (req) {
-                expect(req.url).toBe(url);
-                expect(req.handleFail).toBeFalse();
-            });
-
-            req = ajax.get(url).fail(function () {});
-
-            ajax.once('fail', function (req) {
-                expect(req.url).toBe(url);
-                expect(req.handleFail).toBeThury();
-            });
-        });
-    });
 });
