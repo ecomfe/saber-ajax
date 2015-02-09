@@ -9,6 +9,16 @@ define(function (require, exports, module) {
     var Resolver = require('saber-promise');
     var METHOD = require('../const').METHOD;
 
+    /**
+     * 创建uid
+     *
+     * @inner
+     * @return {string}
+     */
+    function createUID() {
+        return Date.now().toString() + Math.floor(Math.random() * 100);
+    }
+
 
     /**
      * 请求对象
@@ -52,6 +62,7 @@ define(function (require, exports, module) {
         }
         options.url = url;
 
+        this.uid = createUID();
         this.resolver = new Resolver();
         this.promise = this.resolver.promise();
         this.url = url;
