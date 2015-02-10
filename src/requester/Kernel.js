@@ -161,12 +161,6 @@ define(function (require) {
             xhr.send(data);
         }
 
-        // 绑定全局事件
-        requester.promise.then(
-            bind(requester.context.emit, requester.context, 'success', requester),
-            bind(requester.context.emit, requester.context, 'fail', requester)
-        );
-
         return xhr;
     }
 

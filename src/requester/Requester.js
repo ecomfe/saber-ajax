@@ -8,6 +8,7 @@ define(function (require, exports, module) {
     var Kernel = require('./Kernel');
     var Resolver = require('saber-promise');
     var METHOD = require('../const').METHOD;
+    var bind = require('saber-lang').bind;
 
     /**
      * 创建uid
@@ -32,7 +33,17 @@ define(function (require, exports, module) {
      * @param {Object} context 执行环境
      */
     function Requester(options, context) {
+        this.uid = createUID();
+        this.resolver = new Resolver();
+        this.promise = this.resolver.promise();
+        this.context = context;
+        this.handleSuccess = false;
+        this.handleFail = false;
+
         options = options || {};
+        // 触发全局`before`事件
+        context.emit('before', this, options);
+
         options.headers = options.headers || {};
         options.method = options.method || METHOD.GET;
 
@@ -54,23 +65,25 @@ define(function (require, exports, module) {
             data = '';
         }
         options.data = data;
+        this.url = url;
 
-        // 请求地址前缀
-        var host = context.data.host;
-        if (host) {
-            url = host + url;
-        }
+        // 添加请求地址前缀
+        ['prefix', 'host'].forEach(function (item) {
+            item = context.data[item];
+            if (item) {
+                url = item + url;
+            }
+        });
         options.url = url;
 
-        this.uid = createUID();
-        this.resolver = new Resolver();
-        this.promise = this.resolver.promise();
-        this.url = url;
-        this.context = context;
-        this.handleSuccess = false;
-        this.handleFail = false;
         // 发起请求
         this.xhr = new Kernel(options, this);
+
+        // 在请求完成后触发全局事件
+        this.promise.then(
+            bind(context.emit, context, 'success', this),
+            bind(context.emit, context, 'fail', this)
+        );
     }
 
     /**

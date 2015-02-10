@@ -444,6 +444,16 @@ define(function (require) {
     }
 
     describe('Requester', function () {
+        it('.url', function (done)  {
+            var url = URL.ECHO + '?content=w';
+            var req = ajax.get(url);
+
+            req.then(function () {
+                expect(req.url).toEqual(url);
+                done();
+            });
+        });
+
         it('.success()', function (done) {
             var req = ajax.get(URL.ECHO + '?content=hello');
 
@@ -479,68 +489,66 @@ define(function (require) {
         });
     });
 
-    if (!isNode) {
-        describe('全局事件', function () {
-            it('success', function (done) {
-                var url = URL.ECHO + '?content=hello';
-                var req = ajax.get(url);
+    describe('全局事件', function () {
+        it('success', function (done) {
+            var url = URL.ECHO + '?content=hello';
+            var req = ajax.get(url);
+
+            ajax.once('success', function (req, data) {
+                expect(req.url).toBe(url);
+                expect(data).toEqual('hello');
+                done();
+            });
+        });
+
+        it('fail', function (done) {
+            var url = URL.ECHO + '?status=500';
+            var req = ajax.get(url);
+
+            ajax.once('fail', function (req) {
+                expect(req.url).toBe(url);
+                done();
+            });
+        });
+
+        it('handleSuccess', function (done) {
+            var url = URL.ECHO + '?content=hello';
+            var req = ajax.get(url);
+
+            ajax.once('success', function (req) {
+                expect(req.url).toBe(url);
+                expect(req.handleSuccess).toBeFalsy();
+
+                req = ajax.get(url);
+                req.success(function () {});
 
                 ajax.once('success', function (req) {
                     expect(req.url).toBe(url);
-                    expect(req.xhr.responseText).toEqual('hello');
+                    expect(req.handleSuccess).toBeTruthy();
                     done();
                 });
-            });
 
-            it('fail', function (done) {
-                var url = URL.ECHO + '?status=500';
-                var req = ajax.get(url);
+            });
+        });
+
+        it('handleFail', function (done) {
+            var url = URL.ECHO + '?status=500';
+            var req = ajax.get(url);
+
+            ajax.once('fail', function (req) {
+                expect(req.url).toBe(url);
+                expect(req.handleFail).toBeFalsy();
+
+                req = ajax.get(url);
+                req.fail(function () {});
 
                 ajax.once('fail', function (req) {
                     expect(req.url).toBe(url);
+                    expect(req.handleFail).toBeTruthy();
                     done();
-                });
-            });
-
-            it('handleSuccess', function (done) {
-                var url = URL.ECHO + '?content=hello';
-                var req = ajax.get(url);
-
-                ajax.once('success', function (req) {
-                    expect(req.url).toBe(url);
-                    expect(req.handleSuccess).toBeFalsy();
-
-                    req = ajax.get(url);
-                    req.success(function () {});
-
-                    ajax.once('success', function (req) {
-                        expect(req.url).toBe(url);
-                        expect(req.handleSuccess).toBeTruthy();
-                        done();
-                    });
-
-                });
-            });
-
-            it('handleFail', function (done) {
-                var url = URL.ECHO + '?status=500';
-                var req = ajax.get(url);
-
-                ajax.once('fail', function (req) {
-                    expect(req.url).toBe(url);
-                    expect(req.handleFail).toBeFalsy();
-
-                    req = ajax.get(url);
-                    req.fail(function () {});
-
-                    ajax.once('fail', function (req) {
-                        expect(req.url).toBe(url);
-                        expect(req.handleFail).toBeTruthy();
-                        done();
-                    });
                 });
             });
         });
-    }
+    });
 
 });
