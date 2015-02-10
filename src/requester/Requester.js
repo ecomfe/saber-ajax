@@ -124,7 +124,6 @@ define(function (require, exports, module) {
      * @return {Promise}
      */
     Requester.prototype.success = function (success) {
-        this.handleSuccess = true;
         return this.then(success);
     };
 
@@ -136,7 +135,6 @@ define(function (require, exports, module) {
      * @return {Promise}
      */
     Requester.prototype.fail = function (fail) {
-        this.handleFail = true;
         return this.then(null, fail);
     };
 
@@ -149,7 +147,6 @@ define(function (require, exports, module) {
      * @return {Promise}
      */
     Requester.prototype.ensure = function (callback) {
-        this.handleSuccess = this.handleFail = true;
         return this.then(callback, callback);
     };
 
