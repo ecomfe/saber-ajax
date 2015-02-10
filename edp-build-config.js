@@ -33,6 +33,7 @@ exports.exclude = [
     'dep',
     'doc',
     'test',
+    'lib/Context.js',
     'lib/requester/Kernel.js'
 ];
 

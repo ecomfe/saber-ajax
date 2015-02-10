@@ -95,6 +95,7 @@ define(function (require, exports, module) {
      * @param {*} data 响应内容
      */
     Requester.prototype.handle = function (error, res, data) {
+        this.res = res;
         var resolver = this.resolver;
 
         if (error) {
