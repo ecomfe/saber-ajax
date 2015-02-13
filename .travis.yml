@@ -3,4 +3,14 @@ node_js:
   - 0.10
 before_install:
   - npm install phantomjs
+  - mpm install request
+  - mpm install amder
+  - mpm install jasmine-node
+  - mpm install phantomjs
+  - git clone https://github.com/ecomfe/saber-lang.git --branch=feature/isom node_modules/saber-lang
+  - git clone https://github.com/ecomfe/saber-promise.git --branch=feature/isom node_modules/saber-promise
+  - git clone https://github.com/ecomfe/saber-emitter.git --branch=feature/isom node_modules/saber-emitter
+  - git clone https://github.com/ecomfe/saber-lang.git --branch=feature/isom test/dep/saber-lang/1.0.0
+  - git clone https://github.com/ecomfe/saber-promise.git --branch=feature/isom test/dep/saber-promise/1.0.0
+  - git clone https://github.com/ecomfe/saber-emitter.git --branch=feature/isom test/dep/saber-emitter/1.0.0
 install: true
