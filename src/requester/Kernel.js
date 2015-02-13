@@ -7,7 +7,6 @@ define(function (require) {
 
     var METHOD = require('../const').METHOD;
     var util = require('../util');
-    var bind = require('saber-lang').bind;
 
     // responseType枚举类型
     // 默认为text
