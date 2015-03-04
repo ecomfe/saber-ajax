@@ -9,7 +9,7 @@ var ajax = require('../main');
 var ejson = require('../main').ejson;
 
 var options = {
-    host: 'http://local:8848'
+    host: 'http://localhost:8848'
 };
 
 ajax.config(options);
