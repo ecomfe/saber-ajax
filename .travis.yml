@@ -2,15 +2,7 @@ language: node_js
 node_js:
   - 0.10
 before_install:
-  - npm install phantomjs
-  - npm install request
-  - npm install amder
-  - npm install jasmine-node
-  - npm install phantomjs
-  - git clone https://github.com/ecomfe/saber-lang.git --branch=feature/isom node_modules/saber-lang
-  - git clone https://github.com/ecomfe/saber-promise.git --branch=feature/isom node_modules/saber-promise
-  - git clone https://github.com/ecomfe/saber-emitter.git --branch=feature/isom node_modules/saber-emitter
-  - git clone https://github.com/ecomfe/saber-lang.git --branch=feature/isom test/dep/saber-lang/1.0.0
-  - git clone https://github.com/ecomfe/saber-promise.git --branch=feature/isom test/dep/saber-promise/1.0.0
-  - git clone https://github.com/ecomfe/saber-emitter.git --branch=feature/isom test/dep/saber-emitter/1.0.0
+  - git clone https://github.com/ecomfe/saber-lang.git --branch=2.0/develop test/dep/saber-lang/2.0.0-alpha.1
+  - git clone https://github.com/ecomfe/saber-promise.git --branch=2.0/develop test/dep/saber-promise/2.0.0-alpha.1
+  - git clone https://github.com/ecomfe/saber-emitter.git --branch=2.0/develop test/dep/saber-emitter/2.0.0-alpha.1
 install: true
