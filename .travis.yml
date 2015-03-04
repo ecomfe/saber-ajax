@@ -5,4 +5,3 @@ before_install:
   - git clone https://github.com/ecomfe/saber-lang.git --branch=2.0/develop test/dep/saber-lang/2.0.0-alpha.1
   - git clone https://github.com/ecomfe/saber-promise.git --branch=2.0/develop test/dep/saber-promise/2.0.0-alpha.1
   - git clone https://github.com/ecomfe/saber-emitter.git --branch=2.0/develop test/dep/saber-emitter/2.0.0-alpha.1
-install: true
