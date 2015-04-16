@@ -16,7 +16,6 @@
     }
   ],
   "dependencies": {
-    "request": "^2.53.0",
     "saber-promise": "^2.0.0-alpha.1",
     "saber-lang": "^2.0.0-alpha.1",
     "saber-emitter": "^2.0.0-alpha.1"
