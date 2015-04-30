@@ -27,3 +27,5 @@ loader.config({
 require('./spec/ajax');
 
 require('./spec/ejson');
+
+require('./spec/node');
