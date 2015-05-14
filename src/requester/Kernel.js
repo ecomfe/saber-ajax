@@ -56,7 +56,7 @@ define(function (require) {
     };
 
     /**
-     * 根据reponseType获取返回内容
+     * 根据responseType获取返回内容
      *
      * @inner
      * @param {Object} xhr 请求对象

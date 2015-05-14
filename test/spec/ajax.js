@@ -50,7 +50,7 @@ define(function (require) {
 
         request.then(
             function (data) {
-                if (typeof expectSuccessRes == 'function') {
+                if (typeof expectSuccessRes === 'function') {
                     expect(expectSuccessRes(data)).toBeTruthy();
                 }
                 else {
@@ -59,7 +59,7 @@ define(function (require) {
                 done();
             },
             function (status) {
-                if (typeof expectSuccessRes == 'function') {
+                if (typeof expectSuccessRes === 'function') {
                     expect(expectSuccessRes(status)).toBeTruthy();
                 }
                 else {
@@ -155,10 +155,10 @@ define(function (require) {
                 function (res) {
                     res = JSON.parse(res).params;
                     return true
-                        && Object.keys(res).length == Object.keys(data).length
-                        && res.name.length == data.name.length
-                        && res.name[0] == data.name[0]
-                        && res.name[1] == data.name[1]
+                        && Object.keys(res).length === Object.keys(data).length
+                        && res.name.length === data.name.length
+                        && res.name[0] === data.name[0]
+                        && res.name[1] === data.name[1]
                         && res.age == data.age
                 }
             );
@@ -173,7 +173,7 @@ define(function (require) {
                 },
                 function (res) {
                     res = JSON.parse(res);
-                    return res.headers['content-type'] == 'application/x-www-form-urlencoded';
+                    return res.headers['content-type'] === 'application/x-www-form-urlencoded';
                 }
             );
         });
@@ -210,7 +210,7 @@ define(function (require) {
                 },
                 function (res) {
                     res = JSON.parse(res);
-                    return res.headers['content-type'] == 'utf-8';
+                    return res.headers['content-type'] === 'utf-8';
                 }
             );
         });
@@ -227,7 +227,7 @@ define(function (require) {
                 },
                 function (res) {
                     res = JSON.parse(res);
-                    return res.headers['content-type'] == 'utf-8';
+                    return res.headers['content-type'] === 'utf-8';
                 }
             );
         });
@@ -238,7 +238,7 @@ define(function (require) {
         it('默认GET请求', function (done) {
             assertRequest(done, URL.INFO, {}, function (res) {
                 res = JSON.parse(res);
-                return res.method == 'GET';
+                return res.method === 'GET';
             });
         });
 
@@ -324,7 +324,7 @@ define(function (require) {
                     },
                     function (res) {
                         res = JSON.parse(res);
-                        return res.headers['x-custom-name'] == 'treelite';
+                        return res.headers['x-custom-name'] === 'treelite';
                     }
                 );
             });
@@ -339,7 +339,7 @@ define(function (require) {
                     },
                     function (res) {
                         res = JSON.parse(res);
-                        return res.headers['x-requested-with'] == 'XMLHttpRequest';
+                        return res.headers['x-requested-with'] === 'XMLHttpRequest';
                     }
                 );
             });
@@ -434,7 +434,7 @@ define(function (require) {
                     },
                     function (res) {
                         return Object.prototype.toString.call(res)
-                            == '[object String]';
+                            === '[object String]';
                     }
                 );
             });
