@@ -9,6 +9,7 @@ define(function (require, exports, module) {
     var Resolver = require('saber-promise');
     var METHOD = require('../const').METHOD;
     var bind = require('saber-lang').bind;
+    var extend = require('saber-lang').extend;
 
     /**
      * 创建uid
@@ -44,7 +45,10 @@ define(function (require, exports, module) {
         // 触发全局`before`事件
         context.emit('before', this, options);
 
-        options.headers = options.headers || {};
+        // 请求头设置
+        options.headers = extend({}, context.data.headers, options.headers);
+
+        // 请求方法设置
         options.method = options.method || METHOD.GET;
 
         // 添加默认的请求头标示

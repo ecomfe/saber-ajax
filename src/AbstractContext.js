@@ -26,6 +26,8 @@ define(function (require, exports, module) {
      * @public
      * @param {Object=} options 配置参数
      * @param {string=} options.host host配置
+     * @param {string=} options.prefix 请求路径前缀
+     * @param {Object=} options.headers 默认的请求头信息
      */
     Context.prototype.config = function (options) {
         this.data = extend(this.data, options);

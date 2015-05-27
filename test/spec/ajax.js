@@ -551,4 +551,26 @@ define(function (require) {
         });
     });
 
+    describe('Context测试', function () {
+        var defaultData = ajax.data || {};
+
+        afterEach(function () {
+            ajax.data = defaultData;
+        });
+
+        it('默认请求头', function (done) {
+            ajax.config({
+                headers: {
+                    'x-man': 'true'
+                }
+            });
+
+            ajax.get(URL.INFO).then(function (data) {
+                data = JSON.parse(data);
+                expect(data.headers['x-man']).toEqual('true');
+                done();
+            });
+        });
+    });
+
 });
