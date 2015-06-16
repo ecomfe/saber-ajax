@@ -16,7 +16,7 @@ Requester
 
 ### xhr
 
-原始的异步请求对象，对于浏览器端而言是 `XMLHttpRequest`，而 node 上对应 [ClientRequest](https://nodejs.org/api/http.html#http_class_http_clientrequest)
+原始的异步请求对象，对于浏览器端而言是 [XMLHttpRequest](https://developer.mozilla.org/zh-CN/docs/Web/API/XMLHttpRequest)，而 node 环境对应 [ClientRequest](https://nodejs.org/api/http.html#http_class_http_clientrequest)
 
 `{Object}`
 
@@ -36,7 +36,7 @@ Requester
 
 ### then(onFulfill, onReject)
 
-添加请求成功和失败的处理函数，请参考 [Promise.then](https://github.com/ecomfe/saber-promise)
+添加请求成功和失败的处理函数，来源于 [Promise.then](https://github.com/ecomfe/saber-promise/blob/master/doc/promise.md#thenonfulfilled-onrejected)
 
 * **onFulfill** `{Function=}` 请求成功处理，回调参数为请求的返回结果
 * **onReject** `{Function=}` 请求失败处理，回调参数为错误信息，有四种取值：
