@@ -22,7 +22,7 @@
     "devDependencies": {
         "phantomjs": "~1.9.7-1"
     },
-    "license": "BSD",
+    "license": "MIT",
     "repository": "git://github.com/ecomfe/saber-ajax.git",
     "bugs": "https://github.com/ecomfe/saber-ajax/issues"
 }
