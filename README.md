@@ -1,5 +1,7 @@
-saber-ajax [![Build Status](https://travis-ci.org/ecomfe/saber-ajax.png)](https://travis-ci.org/ecomfe/saber-ajax)
+saber-ajax
 ===
+
+![Bower version](https://img.shields.io/bower/v/saber-ajax.svg?style=flat-square) [![Build Status](https://img.shields.io/travis/ecomfe/saber-ajax/1.0/develop.svg?style=flat-square)](https://travis-ci.org/ecomfe/saber-ajax) [![License](https://img.shields.io/npm/l/saber-ajax.svg?style=flat-square)](./LICENSE) [![EFE Mobile Team](https://img.shields.io/badge/EFE-Mobile_Team-blue.svg?style=flat-square)](http://efe.baidu.com)
 
 适用于移动端、promise风格的ajax封装，支持[XMLHttpRequest2](http://www.w3.org/TR/XMLHttpRequest2/)
 
