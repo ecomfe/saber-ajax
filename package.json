@@ -38,7 +38,7 @@
     "jasmine-node": "^2.0.0-beta4",
     "phantomjs": "~1.9.7-1"
   },
-  "license": "BSD",
+  "license": "MIT",
   "repository": "git://github.com/ecomfe/saber-ajax.git",
   "bugs": "https://github.com/ecomfe/saber-ajax/issues"
 }
