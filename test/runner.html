@@ -20,26 +20,26 @@
                 {
                     name: 'saber-ajax',
                     location: '../src',
-                    main: 'ajax'
+                    main: 'main'
                 },
                 {
                     name: 'saber-promise',
-                    location: 'dep/saber-promise/1.0.0/src',
+                    location: './dep/saber-promise/2.0.0/src',
                     main: 'promise'
                 },
                 {
                     name: 'saber-emitter',
-                    location: 'dep/saber-emitter/1.0.0/src',
+                    location: './dep/saber-emitter/2.0.0/src',
                     main: 'emitter'
                 },
                 {
                     name: 'saber-lang',
-                    location: 'dep/saber-lang/1.0.0/src'
+                    location: './dep/saber-lang/2.0.0/src'
                 }
             ]
         });
 
-        require(['boot', 'ajax.spec'], function (boot) {
+        require(['boot', 'spec/ajax', 'spec/ejson'], function (boot) {
             boot();
         });
 

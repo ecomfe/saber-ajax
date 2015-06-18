@@ -1,7 +1,7 @@
 {
   "name": "saber-ajax",
-  "version": "1.0.0",
-  "description": "适用于移动端的Ajax封装",
+  "version": "2.0.0",
+  "description": "适用于移动端的Ajax封装，兼容node环境",
   "main": "ajax",
   "maintainers": [
     {
@@ -16,14 +16,14 @@
     }
   ],
   "dependencies": {
-    "saber-promise": "~1.0.0",
-    "saber-emitter": "~1.0.0",
-    "saber-lang": "~1.0.0"
+    "saber-promise": "~2.0.0",
+    "saber-emitter": "~2.0.0",
+    "saber-lang": "~2.0.0"
   },
   "devDependencies": {
     "phantomjs": "~1.9.7-1"
   },
-  "license": "BSD",
+  "license": "MIT",
   "repository": "git://github.com/ecomfe/saber-ajax.git",
   "bugs": "https://github.com/ecomfe/saber-ajax/issues",
   "ignore": [

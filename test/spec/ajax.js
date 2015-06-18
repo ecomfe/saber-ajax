@@ -1,9 +1,10 @@
 /**
- * @file ajax测试用例
+ * @file AJAX test spec
  * @author treelite(c.xinle@gmail.com)
  */
 
 define(function (require) {
+
     var ajax = require('saber-ajax');
 
     var URL = {
@@ -49,7 +50,7 @@ define(function (require) {
 
         request.then(
             function (data) {
-                if (typeof expectSuccessRes == 'function') {
+                if (typeof expectSuccessRes === 'function') {
                     expect(expectSuccessRes(data)).toBeTruthy();
                 }
                 else {
@@ -58,7 +59,7 @@ define(function (require) {
                 done();
             },
             function (status) {
-                if (typeof expectSuccessRes == 'function') {
+                if (typeof expectSuccessRes === 'function') {
                     expect(expectSuccessRes(status)).toBeTruthy();
                 }
                 else {
@@ -70,8 +71,10 @@ define(function (require) {
     }
 
     function isPhantomJS() {
-        return navigator.userAgent.indexOf("PhantomJS") > 0;
+        return typeof navigator !== 'undefined' && navigator.userAgent.indexOf("PhantomJS") > 0;
     }
+
+    var isNode = typeof process !== 'undefined';
 
     describe('get', function () {
         describe('各状态码正确响应', function () {
@@ -152,10 +155,10 @@ define(function (require) {
                 function (res) {
                     res = JSON.parse(res).params;
                     return true
-                        && Object.keys(res).length == Object.keys(data).length
-                        && res.name.length == data.name.length
-                        && res.name[0] == data.name[0]
-                        && res.name[1] == data.name[1]
+                        && Object.keys(res).length === Object.keys(data).length
+                        && res.name.length === data.name.length
+                        && res.name[0] === data.name[0]
+                        && res.name[1] === data.name[1]
                         && res.age == data.age
                 }
             );
@@ -170,12 +173,12 @@ define(function (require) {
                 },
                 function (res) {
                     res = JSON.parse(res);
-                    return res.headers['content-type'] == 'application/x-www-form-urlencoded';
+                    return res.headers['content-type'] === 'application/x-www-form-urlencoded';
                 }
             );
         });
 
-        if (window.FormData) {
+        if (!isNode && window.FormData) {
             it('使用FormData时不默认添加`content-type`', function (done) {
                 var data = new FormData();
                 data.append('name', 'treelite');
@@ -207,7 +210,7 @@ define(function (require) {
                 },
                 function (res) {
                     res = JSON.parse(res);
-                    return res.headers['content-type'] == 'utf-8';
+                    return res.headers['content-type'] === 'utf-8';
                 }
             );
         });
@@ -224,7 +227,7 @@ define(function (require) {
                 },
                 function (res) {
                     res = JSON.parse(res);
-                    return res.headers['content-type'] == 'utf-8';
+                    return res.headers['content-type'] === 'utf-8';
                 }
             );
         });
@@ -235,22 +238,24 @@ define(function (require) {
         it('默认GET请求', function (done) {
             assertRequest(done, URL.INFO, {}, function (res) {
                 res = JSON.parse(res);
-                return res.method == 'GET';
+                return res.method === 'GET';
             });
         });
 
-        it('同步请求', function () {
-            var req = ajax.request(
-                URL.ECHO + '?content=hello',
-                {
-                    async: false
-                }
-            );
+        if (!isNode) {
+            it('同步请求', function () {
+                var req = ajax.request(
+                    URL.ECHO + '?content=hello',
+                    {
+                        async: false
+                    }
+                );
 
-            req.then(function (data) {
-                expect(data).toEqual('hello');
+                req.then(function (data) {
+                    expect(data).toEqual('hello');
+                });
             });
-        });
+        }
 
         it('abort异步请求', function (done) {
             var req = ajax.request(URL.SLEEP + '?time=1000');
@@ -258,7 +263,6 @@ define(function (require) {
             req.then(
                 function (res) {
                     expect(res).toEqual('abort');
-                    done();
                 },
                 function (error) {
                     expect(error).toEqual('abort');
@@ -286,7 +290,7 @@ define(function (require) {
                 );
             });
 
-            if (window.FormData) {
+            if (!isNode && window.FormData) {
                 it('FormData参数不进行序列化', function (done) {
                     var data = new FormData();
                     data.append('content', 'hello');
@@ -320,7 +324,7 @@ define(function (require) {
                     },
                     function (res) {
                         res = JSON.parse(res);
-                        return res.headers['x-custom-name'] == 'treelite';
+                        return res.headers['x-custom-name'] === 'treelite';
                     }
                 );
             });
@@ -335,28 +339,37 @@ define(function (require) {
                     },
                     function (res) {
                         res = JSON.parse(res);
-                        return res.headers['x-requested-with'] == 'XMLHttpRequest';
+                        return res.headers['x-requested-with'] === 'XMLHttpRequest';
                     }
                 );
             });
         });
 
-        describe('超时设置', function () {
-            // 先检查浏览器是否支持timeout
-            var testXHR = new XMLHttpRequest();
-            if (testXHR.timeout !== undefined) {
-                it('设置成功', function (done) {
-                    assertRequest(
-                        done,
-                        URL.SLEEP + '?time=1000',
-                        {
-                            timeout: 500
-                        },
-                        null,
-                        'timeout'
-                    );
-                });
+    });
 
+    describe('超时设置', function () {
+        var testXHR;
+        if (typeof XMLHttpRequest !== 'undefined') {
+            testXHR = new XMLHttpRequest();
+        }
+        else {
+            testXHR = {};
+        }
+        // 先检查浏览器是否支持timeout
+        if (isNode || testXHR.timeout !== undefined) {
+            it('设置成功', function (done) {
+                assertRequest(
+                    done,
+                    URL.SLEEP + '?time=1000',
+                    {
+                        timeout: 500
+                    },
+                    null,
+                    'timeout'
+                );
+            });
+
+            if (!isNode) {
                 it('忽略给同步请求设置的超时', function () {
                     var req = ajax.request(
                         URL.SLEEP + '?time=1000',
@@ -376,13 +389,15 @@ define(function (require) {
                     );
                 });
             }
-            else {
-                it('当前浏览器不支持timeout设置', function () {
-                    expect(true).toBeTruthy();
-                });
-            }
-        });
+        }
+        else {
+            it('当前浏览器不支持timeout设置', function () {
+                expect(true).toBeTruthy();
+            });
+        }
+    });
 
+    if (!isNode) {
         describe('responseType设置', function () {
             if (window.ArrayBuffer) {
                 it('arraybuffer', function (done) {
@@ -419,17 +434,26 @@ define(function (require) {
                     },
                     function (res) {
                         return Object.prototype.toString.call(res)
-                            == '[object String]';
+                            === '[object String]';
                     }
                 );
             });
 
         });
 
-        //TODO Progress事件测试
-    });
+    }
 
     describe('Requester', function () {
+        it('.url', function (done)  {
+            var url = URL.ECHO + '?content=w';
+            var req = ajax.get(url);
+
+            req.then(function () {
+                expect(req.url).toEqual(url);
+                done();
+            });
+        });
+
         it('.success()', function (done) {
             var req = ajax.get(URL.ECHO + '?content=hello');
 
@@ -470,9 +494,9 @@ define(function (require) {
             var url = URL.ECHO + '?content=hello';
             var req = ajax.get(url);
 
-            ajax.once('success', function (req) {
+            ajax.once('success', function (req, data) {
                 expect(req.url).toBe(url);
-                expect(req.getData()).toBe('hello');
+                expect(data).toEqual('hello');
                 done();
             });
         });
@@ -487,38 +511,66 @@ define(function (require) {
             });
         });
 
-        it('handleSuccess', function () {
+        it('handleSuccess', function (done) {
             var url = URL.ECHO + '?content=hello';
             var req = ajax.get(url);
 
             ajax.once('success', function (req) {
                 expect(req.url).toBe(url);
-                expect(req.handleSuccess).toBeFalse();
-            });
+                expect(req.handleSuccess).toBeFalsy();
 
-            req = ajax.get(url).success(function () {});
+                req = ajax.get(url);
+                req.success(function () {});
 
-            ajax.once('success', function (req) {
-                expect(req.url).toBe(url);
-                expect(req.handleSuccess).toBeThury();
+                ajax.once('success', function (req) {
+                    expect(req.url).toBe(url);
+                    expect(req.handleSuccess).toBeTruthy();
+                    done();
+                });
+
             });
         });
 
-        it('handleFail', function () {
+        it('handleFail', function (done) {
             var url = URL.ECHO + '?status=500';
             var req = ajax.get(url);
 
             ajax.once('fail', function (req) {
                 expect(req.url).toBe(url);
-                expect(req.handleFail).toBeFalse();
-            });
+                expect(req.handleFail).toBeFalsy();
 
-            req = ajax.get(url).fail(function () {});
+                req = ajax.get(url);
+                req.fail(function () {});
 
-            ajax.once('fail', function (req) {
-                expect(req.url).toBe(url);
-                expect(req.handleFail).toBeThury();
+                ajax.once('fail', function (req) {
+                    expect(req.url).toBe(url);
+                    expect(req.handleFail).toBeTruthy();
+                    done();
+                });
             });
         });
     });
+
+    describe('Context测试', function () {
+        var defaultData = ajax.data || {};
+
+        afterEach(function () {
+            ajax.data = defaultData;
+        });
+
+        it('默认请求头', function (done) {
+            ajax.config({
+                headers: {
+                    'x-man': 'true'
+                }
+            });
+
+            ajax.get(URL.INFO).then(function (data) {
+                data = JSON.parse(data);
+                expect(data.headers['x-man']).toEqual('true');
+                done();
+            });
+        });
+    });
+
 });
