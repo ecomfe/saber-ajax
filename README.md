@@ -3,7 +3,7 @@ saber-ajax
 
 ![Bower version](https://img.shields.io/bower/v/saber-ajax.svg?style=flat-square) [![NPM version](https://img.shields.io/npm/v/saber-ajax.svg?style=flat-square)](https://npmjs.org/package/saber-ajax) [![Build Status](https://img.shields.io/travis/ecomfe/saber-ajax.svg?style=flat-square)](https://travis-ci.org/ecomfe/saber-ajax) [![License](https://img.shields.io/npm/l/saber-ajax.svg?style=flat-square)](./LICENSE) [![EFE Mobile Team](https://img.shields.io/badge/EFE-Mobile_Team-blue.svg?style=flat-square)](http://efe.baidu.com)
 
-适用于移动端、[Promise](https://github.com/ecomfe/saber-promise) 风格的 ajax 封装，支持 [XMLHttpRequest2](http://www.w3.org/TR/XMLHttpRequest2/)
+适用于移动端、[Promise](https://github.com/ecomfe/saber-promise) 风格的 ajax 封装，支持 [XMLHttpRequest2](http://www.w3.org/TR/XMLHttpRequest2/)，兼容 node 环境
 
 <del>以<a href="http://baike.baidu.com/view/8420590.htm" target="_blank">吾王</a>之名~</del>
 
@@ -13,6 +13,12 @@ saber-ajax
 
 ```sh
 $ edp import saber-ajax
+```
+
+或者在 node 环境下使用 `npm` 引入模块：
+
+```sh
+$ npm install saber-ajax --save
 ```
 
 ## Usage
