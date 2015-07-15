@@ -98,6 +98,7 @@ ajax = require('saber-ajax').ejson;
     * **host** `{string=}` host，默认为空
     * **prefix** `{string=}` 请求路径前缀，默认为空
     * **headers** `{Object=}` 请求头信息，默认为空
+    * **agent** `{Object=}` 请求管理对象配置信息，只针对 node 平台配置有效，具体配置项请参考 [http.Agent 的初始化说明](https://nodejs.org/api/http.html#http_new_agent_options)
 
 #### on(event, fn)
 
