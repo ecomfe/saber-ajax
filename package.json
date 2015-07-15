@@ -18,13 +18,13 @@
   "dependencies": {
     "saber-emitter": "^2.0.0",
     "saber-lang": "^2.0.0",
-    "saber-promise": "^2.0.0"
+    "saber-promise": "^2.0.1"
   },
   "edp": {
     "dependencies": {
       "saber-promise": "~2.0.0",
       "saber-emitter": "~2.0.0",
-      "saber-lang": "~2.0.0"
+      "saber-lang": "~2.0.1"
     }
   },
   "scripts": {
