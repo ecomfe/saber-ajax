@@ -15,16 +15,6 @@ describe('Node env special test,', function () {
         ajax.data = data;
     });
 
-    it('do not enable "keep-alive" default', function (done) {
-        ajax.get('/info').then(function (info) {
-            info = JSON.parse(info);
-            var headers = info.headers;
-
-            expect(headers['connection'].indexOf('keep-alive') < 0).toBeTruthy();
-            done();
-        });
-    });
-
     it('enable "keep-alive"', function (done) {
         ajax.config({
             agent: {
