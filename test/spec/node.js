@@ -7,7 +7,31 @@ var ajax = require('../../main');
 
 describe('Node env special test,', function () {
 
+    beforeEach(function () {
+        var data = ajax.data;
+        if (data.hasOwnProperty('agent')) {
+            delete data.agent;
+        }
+        ajax.data = data;
+    });
+
+    it('do not enable "keep-alive" default', function (done) {
+        ajax.get('/info').then(function (info) {
+            info = JSON.parse(info);
+            var headers = info.headers;
+
+            expect(headers['connection'].indexOf('keep-alive') < 0).toBeTruthy();
+            done();
+        });
+    });
+
     it('enable "keep-alive"', function (done) {
+        ajax.config({
+            agent: {
+                keepAlive: true
+            }
+        });
+
         ajax.get('/info').then(function (info) {
             info = JSON.parse(info);
             var headers = info.headers;
@@ -26,10 +50,10 @@ describe('Node env special test,', function () {
                 done();
             }
         }
-        
+
         function request() {
             var requester = ajax.get('/sleep?time=500');
-            var req = requester.xhr; 
+            var req = requester.xhr;
 
             req.on('socket', function () {
                 sendNum++;
