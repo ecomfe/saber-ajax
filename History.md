@@ -1,3 +1,8 @@
+#2.1.0 / 2015-07-15
+
+* node 平台下不再默认开启 `keepAlive`
+* [config](./README.md#configoptions) 方法，增加配置项 `agent`，针对 node 平台的请求管理对象配置
+
 #2.0.0 / 2015-06-18
 
 * 同构化，兼容 node 环境

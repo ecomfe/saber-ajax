@@ -1,6 +1,6 @@
 {
   "name": "saber-ajax",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "适用于移动端的Ajax封装，兼容node环境",
   "main": "main",
   "maintainers": [
@@ -16,15 +16,15 @@
     }
   ],
   "dependencies": {
+    "saber-promise": "^2.0.0",
     "saber-emitter": "^2.0.0",
-    "saber-lang": "^2.0.0",
-    "saber-promise": "^2.0.0"
+    "saber-lang": "^2.0.1"
   },
   "edp": {
     "dependencies": {
       "saber-promise": "~2.0.0",
       "saber-emitter": "~2.0.0",
-      "saber-lang": "~2.0.0"
+      "saber-lang": "~2.0.1"
     }
   },
   "scripts": {
